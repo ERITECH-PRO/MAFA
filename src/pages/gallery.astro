@@ -1,0 +1,179 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import PrimaryCTA from "@components/ui/buttons/PrimaryCTA.astro";
+import { Image } from "astro:assets";
+
+import constructionImage from "@images/construction-image.avif";
+import beforeAfter from "@images/before-after.avif";
+import dashboardImage from "@images/dashboard-image.avif";
+import personWorking from "@images/person-working.avif";
+import progressBuilding from "@images/progress-building.avif";
+import underConstruction from "@images/under-construction.avif";
+
+const galleryItems = [
+  {
+    title: "Collective kitchen on mining site",
+    description:
+      "End-to-end catering operations on base camps, serving hundreds of meals under strict hygiene and traceability standards.",
+    img: constructionImage,
+    alt: "Collective kitchen service on a mining site",
+  },
+  {
+    title: "Industrial cleaning crew at work",
+    description:
+      "QHSE-compliant cleaning interventions for industrial, hospitality, and healthcare facilities.",
+    img: beforeAfter,
+    alt: "Industrial cleaning team delivering service",
+  },
+  {
+    title: "Delivery of hotel-grade equipment",
+    description:
+      "Coordinated logistics and supply of consumables, linen, and professional kitchen equipment across the country.",
+    img: dashboardImage,
+    alt: "Delivery of hotel equipment and supplies",
+  },
+  {
+    title: "Culinary training in session",
+    description:
+      "Hands-on training modules for chefs and cooks, combining theory, practice, and certification.",
+    img: personWorking,
+    alt: "Culinary trainees in a training kitchen",
+  },
+  {
+    title: "Agro-processing unit in operation",
+    description:
+      "Transformation of local crops into value-added food products within certified facilities.",
+    img: progressBuilding,
+    alt: "Food processing operations at MAFA",
+  },
+  {
+    title: "Kitchen maintenance and support service",
+    description:
+      "Preventive and corrective maintenance ensuring business continuity for professional kitchens.",
+    img: underConstruction,
+    alt: "Maintenance support for kitchen infrastructure",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "MAFA met the high standards of our mining operations catering.",
+    author: "Logistics Director, Mining Company",
+  },
+  {
+    quote: "Reliable, responsive, and tailored services.",
+    author: "Operations Manager, NGO",
+  },
+];
+---
+
+<MainLayout
+  title="Gallery | MAFA"
+  customDescription="Explore a selection of MAFA projects across catering, cleaning, logistics, training, agro-processing, and maintenance."
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://mafa.com/gallery",
+    url: "https://mafa.com/gallery",
+    name: "MAFA Project Gallery",
+    description:
+      "Discover representative visuals of MAFA's key projects and partner engagements.",
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://mafa.com",
+      name: "MAFA",
+      description:
+        "MAFA is a multisector African services company operating across catering, cleaning, logistics, training, agro-processing, and strategic partnerships.",
+    },
+    inLanguage: "en",
+  }}
+>
+  <section
+    class="mx-auto max-w-[85rem] px-4 pt-16 text-center sm:px-6 lg:px-8 2xl:max-w-full"
+  >
+    <p class="text-sm font-semibold uppercase tracking-widest text-orange-500">
+      Gallery
+    </p>
+    <h1
+      class="mt-4 text-4xl font-bold tracking-tight text-balance text-neutral-800 md:text-5xl lg:text-6xl dark:text-neutral-200"
+    >
+      Project visuals from the field
+    </h1>
+    <p
+      class="mx-auto mt-5 max-w-3xl text-lg text-pretty text-neutral-600 dark:text-neutral-400"
+    >
+      Each visual captures how MAFA deploys its teams and solutions across
+      Africa, illustrating operational excellence in real working environments.
+    </p>
+  </section>
+
+  <section
+    class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 2xl:max-w-full"
+  >
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        galleryItems.map((item) => (
+          <article
+            class="flex flex-col rounded-2xl border border-neutral-200/70 bg-white/70 p-5 shadow-sm shadow-neutral-200/60 dark:border-white/10 dark:bg-white/[0.02] dark:shadow-none"
+          >
+            <div class="overflow-hidden rounded-xl">
+              <Image
+                class="h-56 w-full rounded-xl object-cover"
+                src={item.img}
+                alt={item.alt}
+                draggable={"false"}
+                format={"avif"}
+              />
+            </div>
+            <div class="mt-5 flex-1">
+              <h3
+                class="text-xl font-semibold text-neutral-800 dark:text-neutral-100"
+              >
+                {item.title}
+              </h3>
+              <p class="mt-3 text-pretty text-neutral-600 dark:text-neutral-400">
+                {item.description}
+              </p>
+            </div>
+            <div class="mt-6">
+              <PrimaryCTA title="Learn more" url="/contact" />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section
+    class="mx-auto max-w-[85rem] px-4 pb-16 sm:px-6 lg:px-8 2xl:max-w-full"
+  >
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-sm font-semibold uppercase tracking-widest text-orange-500">
+        Testimonials
+      </p>
+      <h2
+        class="mt-4 text-3xl font-bold text-balance text-neutral-800 md:text-4xl dark:text-neutral-200"
+      >
+        Partner feedback
+      </h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {
+        testimonials.map((item) => (
+          <figure
+            class="rounded-2xl border border-neutral-200/70 bg-white/70 p-6 shadow-sm shadow-neutral-200/60 dark:border-white/10 dark:bg-white/[0.02] dark:shadow-none"
+          >
+            <blockquote class="text-lg text-pretty text-neutral-700 dark:text-neutral-200">
+              “{item.quote}”
+            </blockquote>
+            <figcaption class="mt-4 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+              — {item.author}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+</MainLayout>
+

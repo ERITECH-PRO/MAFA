@@ -1,0 +1,191 @@
+---
+// Import the necessary components
+import MainLayout from "@/layouts/MainLayout.astro";
+import HeroSection from "@components/sections/landing/HeroSection.astro";
+import HeroSectionAlt from "@components/sections/landing/HeroSectionAlt.astro";
+import ClientsSection from "@components/sections/landing/ClientsSection.astro";
+import FeaturesGeneral from "@components/sections/features/FeaturesGeneral.astro";
+import FeaturesNavs from "@components/sections/features/FeaturesNavs.astro";
+import TestimonialsSection from "@components/sections/testimonials/TestimonialsSection.astro";
+import PricingSection from "@components/sections/pricing/PricingSection.astro";
+import FAQ from "@components/sections/misc/FAQ.astro";
+import heroImage from "@images/hero-image.avif";
+import faqs from "@data/faqs.json";
+import features from "@data/features.json";
+import pricing from "@data/pricing.json";
+import featureImage from "@images/features-image.avif";
+import construction from "@images/construction-image.avif";
+import tools from "@images/automated-tools.avif";
+import dashboard from "@images/dashboard-image.avif";
+import { partnersData } from "@/data_files/constants";
+
+const avatarSrcs: Array<string> = [
+  "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+];
+
+const isFrench = Astro.currentLocale === "fr";
+const localizedFeatures = features.map((feature) => {
+  const [frHeading, enHeading] = feature.heading.split("·").map((part) => part.trim());
+  const [frContent, enContent] = feature.content.split(". ").length > 1
+    ? feature.content.split("·").map((part) => part.trim())
+    : [feature.content, feature.content];
+  return {
+    ...feature,
+    heading: isFrench ? frHeading || feature.heading : enHeading || feature.heading,
+    content: isFrench ? frContent || feature.content : enContent || feature.content,
+  };
+});
+---
+
+<MainLayout>
+  <HeroSection
+    title={
+      isFrench
+        ? `MAFA — <span class="text-yellow-500 dark:text-yellow-400">Multisectorielle & Innovante</span>`
+        : `MAFA — <span class="text-yellow-500 dark:text-yellow-400">Multisectoral & Innovative</span>`
+    }
+    subTitle={
+      isFrench
+        ? "L’excellence en restauration, logistique et développement durable. MAFA intervient en Afrique dans la restauration, le nettoyage, la logistique hôtelière, la formation culinaire, la transformation agroalimentaire et le conseil stratégique, avec un haut niveau d’exigence et de responsabilité."
+        : "Excellence in catering, logistics, and sustainable development. MAFA operates across catering, cleaning, hotel logistics, culinary training, agro-food processing, and consulting with uncompromising quality, innovation, and responsibility."
+    }
+    primaryBtn={isFrench ? "Découvrir MAFA" : "Discover MAFA"}
+    primaryBtnURL="/services"
+    secondaryBtn={isFrench ? "Demander un devis" : "Request a quote"}
+    secondaryBtnURL="/contact"
+    withReview={false}
+    src={heroImage}
+    alt={isFrench ? "MAFA - Multisectorielle et innovante" : "MAFA - Multisectoral and innovative"}
+  />
+
+  <ClientsSection
+    title={isFrench ? "Ils nous font confiance" : "Trusted by our partners"}
+    subTitle={
+      isFrench
+        ? "MAFA accompagne institutions publiques, groupes privés et organisations internationales partout en Afrique."
+        : "MAFA supports public institutions, private groups, and international organizations across Africa."
+    }
+    partners={partnersData}
+  />
+
+  <FeaturesGeneral
+    title={isFrench ? "Panorama de nos 6 pôles" : "6 Sectors Overview"}
+    subTitle={
+      isFrench
+        ? "Explorez les six pôles complémentaires qui font de MAFA un partenaire de référence en Afrique."
+        : "Discover the six complementary fields that make MAFA a trusted partner across Africa."
+    }
+    src={featureImage}
+    alt="MAFA's six activity areas"
+    features={localizedFeatures}
+  />
+
+  <FeaturesNavs
+    title={
+      isFrench
+        ? "Adaptez les solutions MAFA à vos besoins"
+        : "Tailor MAFA solutions to your operations"
+    }
+    tabs={[
+      {
+        heading: isFrench ? "Pilotage opérationnel" : "Operational steering",
+        content: isFrench
+          ? "Planification, supervision et reporting en temps réel pour sécuriser vos programmes multisites."
+          : "Real-time planning, oversight, and reporting to secure multisite programs.",
+        svg: "tools",
+        src: tools,
+        alt: isFrench ? "Équipes MAFA en supervision" : "MAFA operational teams",
+        first: true,
+      },
+      {
+        heading: isFrench ? "Logistique & traçabilité" : "Logistics & traceability",
+        content: isFrench
+          ? "Chaînes d’approvisionnement optimisées, indicateurs qualité et distribution sécurisée."
+          : "Optimized supply chains, quality dashboards, and secured distribution.",
+        svg: "dashboard",
+        src: dashboard,
+        alt: isFrench ? "Outils de pilotage MAFA" : "MAFA monitoring tools",
+        second: true,
+      },
+      {
+        heading: isFrench ? "Qualité & conformité" : "Quality & compliance",
+        content: isFrench
+          ? "Procédures QHSE, audits et formation continue pour garantir des standards internationaux."
+          : "QHSE procedures, audits, and continuous training to meet international standards.",
+        svg: "house",
+        src: construction,
+        alt: isFrench ? "Contrôles qualité MAFA" : "MAFA quality controls",
+      },
+    ]}
+  />
+
+  <TestimonialsSection
+    title={
+      isFrench
+        ? "Accélérez vos projets avec MAFA"
+        : "Fast-track your projects with MAFA"
+    }
+    subTitle={
+      isFrench
+        ? "Nous déployons des solutions clés en main en quelques semaines sur tout le continent."
+        : "We roll out turnkey solutions across Africa within weeks."
+    }
+    testimonials={[
+      {
+        content:
+          isFrench
+            ? "“MAFA a structuré l’ensemble de notre restauration de base vie et assuré la conformité QHSE en un temps record. Leur flexibilité sur le terrain est remarquable.”"
+            : "“MAFA structured our camp catering and delivered full QHSE compliance in record time. Their field flexibility is outstanding.”",
+        author: "Aïcha Traoré",
+        role: "Directrice des opérations | Groupe minier ouest-africain",
+        avatarSrc:
+          "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?q=80&w=1453&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+      },
+    ]}
+    statistics={[
+      {
+        count: "250+",
+        description: isFrench
+          ? "projets multisectoriels livrés"
+          : "multisector projects delivered",
+      },
+      {
+        count: isFrench ? "15 pays" : "15 countries",
+        description: isFrench
+          ? "présence opérationnelle en Afrique"
+          : "operational presence across Africa",
+      },
+      {
+        count: "98%",
+        description: isFrench
+          ? "taux de satisfaction clients"
+          : "client satisfaction rate",
+      },
+      {
+        count: "24/7",
+        description: "support & supervision",
+      },
+    ]}
+  />
+
+  <PricingSection pricing={pricing} />
+
+  <FAQ title="Frequently<br />asked questions" faqs={faqs} />
+
+  <HeroSectionAlt
+    title={
+      isFrench
+        ? "Construisons ensemble avec MAFA"
+        : "Let’s build together with MAFA"
+    }
+    subTitle={
+      isFrench
+        ? "Des solutions intégrées pour la restauration, la logistique et les services supports partout en Afrique."
+        : "Integrated catering, logistics, and support services across Africa."
+    }
+    url="/contact"
+  />
+</MainLayout>

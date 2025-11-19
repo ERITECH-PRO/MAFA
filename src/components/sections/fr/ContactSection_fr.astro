@@ -1,0 +1,137 @@
+---
+// Import the necessary dependencies.
+import AuthBtn from "@components/ui/buttons/AuthBtn.astro";
+import ContactIconBlock from "@components/ui/blocks/ContactIconBlock.astro";
+import TextInput from "@components/ui/forms/input/TextInput.astro";
+import EmailContactInput from "@components/ui/forms/input/EmailContactInput.astro";
+import PhoneInput from "@components/ui/forms/input/PhoneInput.astro";
+import TextAreaInput from "@components/ui/forms/input/TextAreaInput.astro";
+import Icon from "@components/ui/icons/Icon.astro";
+
+// Define the variables that will be used in this component
+const title: string = "Contactez MAFA";
+const subTitle: string =
+  "Pour une demande de devis, un partenariat ou des informations, notre équipe vous répond dans les meilleurs délais.";
+const formTitle: string = "Remplissez le formulaire ci-dessous";
+const formSubTitle: string =
+  "Nous vous répondrons dans les meilleurs délais.";
+const whatsappNumber: string = "+226 70 00 00 00";
+const whatsappNumberClean: string = whatsappNumber.replace(/\s/g, "");
+const whatsappURL: string = `https://wa.me/${whatsappNumberClean}`;
+---
+
+<!-- Contact Us -->
+<section class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+  <div class="mx-auto max-w-2xl lg:max-w-5xl">
+    <div class="text-center">
+      <h1
+        class="text-balance text-2xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 md:text-4xl md:leading-tight"
+      >
+        {title}
+      </h1>
+      <p class="mt-1 text-pretty text-neutral-600 dark:text-neutral-400">
+        {subTitle}
+      </p>
+    </div>
+
+    <div class="mt-12 grid items-center gap-6 lg:grid-cols-2 lg:gap-16">
+      <div class="flex flex-col rounded-xl p-4 sm:p-6 lg:p-8">
+        <h2
+          class="mb-8 text-xl font-bold text-neutral-700 dark:text-neutral-300"
+        >
+          {formTitle}
+        </h2>
+        <!-- Form for user input with various input fields.-->
+        <!-- Each field utilizes a different input component for the specific type of input (text, email, phone, and textarea)-->
+        <form>
+          <div class="grid gap-4">
+            <TextInput
+              id="hs-name-contacts"
+              label="Nom"
+              name="hs-name-contacts"
+            />
+            <EmailContactInput id="hs-email-contacts" />
+            <PhoneInput id="hs-phone-number" />
+            <TextInput
+              id="hs-subject-contacts"
+              label="Objet"
+              name="hs-subject-contacts"
+            />
+            <TextAreaInput
+              id="hs-message-contacts"
+              label="Message"
+              name="hs-message-contacts"
+            />
+          </div>
+
+          <div class="mt-4 grid gap-3">
+            <AuthBtn title="Envoyer un message" />
+            <a
+              href={whatsappURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group inline-flex items-center justify-center gap-x-2 rounded-lg border border-green-500 bg-green-500 px-4 py-3 text-sm font-bold text-neutral-50 ring-zinc-500 transition duration-300 hover:bg-green-600 active:bg-green-600 focus-visible:ring-3 outline-hidden disabled:pointer-events-none disabled:opacity-50 2xl:text-base dark:ring-zinc-200"
+            >
+              Discuter sur WhatsApp
+              <Icon name="arrowRight" />
+            </a>
+          </div>
+
+          <div class="mt-3 text-center">
+            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+              {formSubTitle}
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!--ContactIconBlocks are used to display different methods of contacting, including address, phone, and email.-->
+      <div class="divide-y divide-neutral-300 dark:divide-neutral-700">
+        <ContactIconBlock
+          heading="📍 Adresse"
+          content="MAFA"
+          isAddressVisible={true}
+          addressContent="01 BP 0001 Ouagadougou 01, Burkina Faso"
+          ><Icon name="mapPin" />
+        </ContactIconBlock>
+
+        <ContactIconBlock
+          heading="📞 Téléphone"
+          content="Appelez-nous directement"
+          isLinkVisible={true}
+          linkTitle={whatsappNumber}
+          linkURL={`tel:${whatsappNumberClean}`}
+          ><Icon name="chatBubble" />
+        </ContactIconBlock>
+
+        <ContactIconBlock
+          heading="✉️ E-mail"
+          content="Envoyez-nous un e-mail à"
+          isLinkVisible={true}
+          linkTitle="contact@mafa-africa.com"
+          linkURL="mailto:contact@mafa-africa.com"
+          ><Icon name="envelopeOpen" />
+        </ContactIconBlock>
+      </div>
+
+      <!-- Map section -->
+      <div class="mt-8">
+        <h3 class="mb-4 text-lg font-bold text-neutral-700 dark:text-neutral-300">
+          Notre localisation
+        </h3>
+        <div class="overflow-hidden rounded-xl">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.5!2d-1.5197!3d12.3714!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDIyJzE3LjAiTiAxwrAzMScxMC45Ilc!5e0!3m2!1sfr!2sbf!4v1234567890123!5m2!1sfr!2sbf"
+            width="100%"
+            height="300"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            class="w-full"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

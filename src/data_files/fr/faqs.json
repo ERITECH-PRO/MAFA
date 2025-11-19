@@ -1,0 +1,29 @@
+{
+  "subTitle": "Posez-nous toutes vos questions sur nos services en restauration, logistique, formation et agroalimentaire.",
+  "faqs": [
+    {
+      "question": "Quels services de restauration propose MAFA sur les sites isolés?",
+      "answer": "MAFA assure la restauration complète des bases-vie et des sites isolés, avec des menus adaptés, une logistique maîtrisée et des contrôles QHSE quotidiens."
+    },
+    {
+      "question": "Comment MAFA garantit-elle l'hygiène et la sécurité alimentaire?",
+      "answer": "Nous appliquons des procédures QHSE certifiées, avec traçabilité, contrôles réguliers et formation continue des équipes à toutes les étapes."
+    },
+    {
+      "question": "MAFA peut-elle gérer la logistique hôtelière d'un groupe multi-sites?",
+      "answer": "Oui, nous gérons l'approvisionnement, la distribution et la maintenance des équipements hôteliers et de cuisine pour des réseaux nationaux."
+    },
+    {
+      "question": "Proposez-vous des formations culinaires certifiantes?",
+      "answer": "MAFA dispense des programmes certifiants avec pratique en cuisine-école, audit QHSE et placement dans notre réseau d'établissements."
+    },
+    {
+      "question": "Comment accompagnez-vous la transformation agroalimentaire?",
+      "answer": "Nous installons et opérons des unités de transformation pour valoriser les productions locales, avec contrôle qualité et débouchés sécurisés."
+    },
+    {
+      "question": "Offrez-vous du conseil ou de la maintenance pour les services supports?",
+      "answer": "Nous proposons du conseil stratégique, de la maintenance préventive et la facilitation de partenariats pour structurer des services durables."
+    }
+  ]
+}

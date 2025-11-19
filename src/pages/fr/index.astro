@@ -1,0 +1,135 @@
+---
+// Import the necessary components
+import MainLayout from "@/layouts/MainLayout.astro";
+import HeroSection from "@components/sections/landing/HeroSection.astro";
+import HeroSectionAlt from "@components/sections/landing/HeroSectionAlt.astro";
+import ClientsSection from "@components/sections/landing/ClientsSection.astro";
+import FeaturesGeneral from "@components/sections/features/FeaturesGeneral.astro";
+import FeaturesNavs from "@components/sections/features/FeaturesNavs.astro";
+import TestimonialsSection from "@components/sections/testimonials/TestimonialsSection.astro";
+import PricingSection from "@components/sections/pricing/PricingSection.astro";
+import FAQ from "@components/sections/misc/FAQ.astro";
+import heroImage from "@images/hero-image.avif";
+import faqs from "@data/fr/faqs.json";
+import features from "@data/fr/features.json";
+import pricing from "@data/fr/pricing.json";
+import featureImage from "@images/features-image.avif";
+import construction from "@images/construction-image.avif";
+import tools from "@images/automated-tools.avif";
+import dashboard from "@images/dashboard-image.avif";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { partnersData } from "@/data_files/constants";
+
+const avatarSrcs: Array<string> = [
+  "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80",
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80",
+];
+---
+
+<MainLayout lang="fr">
+  <HeroSection
+    title=`MAFA — <span class="text-yellow-500 dark:text-yellow-400">Multisectorielle & Innovante</span>`
+    subTitle="L'excellence au service de la restauration, de la logistique et du développement durable. MAFA est une entreprise multisectorielle engagée en Afrique dans six domaines complémentaires : restauration, nettoyage, logistique hôtelière, formation culinaire, transformation agroalimentaire, conseil & maintenance. Elle incarne qualité, expertise et engagement."
+    primaryBtn="Découvrir MAFA"
+    primaryBtnURL={getRelativeLocaleUrl("fr", "services")}
+    secondaryBtn="Demander un devis"
+    secondaryBtnURL={getRelativeLocaleUrl("fr", "contact")}
+    withReview={false}
+    src={heroImage}
+    alt="MAFA - Entreprise multisectorielle innovante"
+  />
+
+  <ClientsSection
+    title="Faites confiance aux leaders de l'industrie"
+    subTitle="Découvrez la fiabilité choisie par les géants de l'industrie."
+    partners={partnersData}
+  />
+
+  <FeaturesGeneral
+    title="Aperçu des 6 pôles"
+    subTitle="Découvrez nos six domaines d'expertise complémentaires qui font de MAFA un partenaire de choix pour vos projets en Afrique."
+    src={featureImage}
+    alt="Les six pôles d'activité de MAFA"
+    features={features}
+  />
+
+  <FeaturesNavs
+    title={`Adaptez les solutions <span class="text-yellow-500 dark:text-yellow-400">MAFA</span> à vos opérations, de la restauration à la logistique.`}
+    tabs={[
+      {
+        heading: "Pilotage & supervision",
+        content:
+          "Planification, supervision terrain et reporting QHSE en temps réel pour sécuriser vos sites et base-vie MAFA.",
+        svg: "tools",
+        src: tools,
+        alt: "Équipes MAFA en supervision",
+        first: true,
+      },
+      {
+        heading: "Logistique & traçabilité",
+        content:
+          "Chaînes d’approvisionnement optimisées, indicateurs qualité et distribution maîtrisée pour vos équipements hôteliers et denrées.",
+        svg: "dashboard",
+        src: dashboard,
+        alt: "Solutions logistiques MAFA",
+        second: true,
+      },
+      {
+        heading: "Qualité & conformité",
+        content:
+          "Procédures QHSE, audits et formation continue pour garantir des standards internationaux en restauration et services supports.",
+        svg: "house",
+        src: construction,
+        alt: "Contrôles qualité MAFA",
+      },
+    ]}
+  />
+
+  <TestimonialsSection
+    title="Accélérez vos projets avec MAFA"
+    subTitle="Nos équipes déploient des solutions clés en main, du catering à la maintenance, pour garantir un démarrage opérationnel en quelques semaines."
+    testimonials={[
+      {
+        content:
+          "MAFA a repris la restauration et la logistique de notre base-vie en assurant une traçabilité rigoureuse. Leur présence terrain et leur réactivité font toute la différence pour nos équipes.",
+        author: "Seydou Kaboré",
+        role: "Responsable logistique | Groupe minier sahélien",
+        avatarSrc:
+          "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?q=80&w=1453&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+      },
+    ]}
+    statistics={[
+      {
+        count: "250+",
+        description:
+          "projets multisectoriels livrés",
+      },
+      {
+        count: "15 pays",
+        description:
+          "présence opérationnelle sur le continent",
+      },
+      {
+        count: "98%",
+        description:
+          "taux de satisfaction clients",
+      },
+      {
+        count: "24/7",
+        description: "support et supervision",
+      },
+    ]}
+  />
+
+  <PricingSection pricing={pricing} />
+
+  <FAQ title="Questions<br />fréquemment posées" faqs={faqs} />
+
+  <HeroSectionAlt
+    title="Construisons ensemble"
+    subTitle="ScrewFast est un modèle open source, méticuleusement conçu avec les frameworks Astro, Tailwind CSS et Preline UI."
+    url="https://github.com/mearashadowfax/ScrewFast"
+  />
+</MainLayout>

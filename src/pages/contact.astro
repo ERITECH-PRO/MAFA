@@ -1,0 +1,36 @@
+---
+// Import the necessary components
+import MainLayout from "@/layouts/MainLayout.astro";
+import ContactSection from "@components/sections/misc/ContactSection.astro";
+import { SITE } from "@data/constants";
+
+const pageTitle: string = `Get in Touch with MAFA | ${SITE.title}`;
+const metaDescription =
+  "For quotes, partnerships, or inquiries, reach out to MAFA and our team will respond promptly.";
+const ogTitle = "Get in Touch with MAFA";
+---
+
+<MainLayout
+  title={pageTitle}
+  customDescription={metaDescription}
+  customOgTitle={ogTitle}
+  structuredData={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://mafa.com/contact",
+    url: "https://mafa.com/contact",
+    name: "Get in Touch with MAFA",
+    description:
+      "For quotes, partnerships, or inquiries, reach out to MAFA and our team will respond promptly.",
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://mafa.com",
+      name: "MAFA",
+      description:
+        "MAFA delivers multisector services across catering, cleaning, hotel logistics, training, agro-processing, and strategic support.",
+    },
+    inLanguage: "en-US",
+  }}
+>
+  <ContactSection />
+</MainLayout>

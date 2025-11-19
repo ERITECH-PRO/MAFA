@@ -1,0 +1,29 @@
+{
+  "subTitle": "Ask us anything about MAFA’s catering, logistics, training, and agro-food services.",
+  "faqs": [
+    {
+      "question": "Which catering services can MAFA deploy on remote sites?",
+      "answer": "MAFA delivers end-to-end catering for mining camps, hospitals, schools, and events, covering menu engineering, supply chain, and QHSE controls."
+    },
+    {
+      "question": "How does MAFA guarantee food safety and hygiene?",
+      "answer": "We apply certified QHSE procedures with traceability, daily inspections, and continuous training for all operational teams."
+    },
+    {
+      "question": "Can MAFA manage hotel logistics for a multi-site network?",
+      "answer": "Yes. We supervise sourcing, delivery, maintenance, and inventory for hotel and kitchen equipment across national or regional networks."
+    },
+    {
+      "question": "Do you offer certified culinary training programs?",
+      "answer": "MAFA runs certified curricula combining theory, practice in training kitchens, QHSE audits, and placement within our hospitality network."
+    },
+    {
+      "question": "How does MAFA support agro-food transformation?",
+      "answer": "We set up and operate processing units to convert local crops into value-added food products with quality control and secured outlets."
+    },
+    {
+      "question": "Do you provide strategic consulting or maintenance services?",
+      "answer": "MAFA offers strategic advisory, preventive maintenance, and partnership facilitation to build resilient support services across Africa."
+    }
+  ]
+}
