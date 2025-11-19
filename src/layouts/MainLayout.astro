@@ -5,7 +5,7 @@ import Navbar from "@components/sections/navbar&footer/Navbar.astro";
 import FooterSection from "@components/sections/navbar&footer/FooterSection.astro";
 import { SITE } from "@data/constants";
 import "@styles/global.css";
-
+import ThreeDBackground from "@components/background/ThreeDBackground.astro";
 // Setting expected props
 const {
   title = SITE.title,
@@ -62,6 +62,7 @@ interface Props {
     The Navbar is placed at the top, with a slot for the main content and FooterSection at the bottom.
     */}
     <div class="w-full mx-auto max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8 flex-grow">
+      <ThreeDBackground />
       <Navbar />
       <main>
         <slot />

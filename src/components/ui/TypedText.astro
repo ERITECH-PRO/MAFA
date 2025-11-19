@@ -1,0 +1,28 @@
+---
+const { text, class: className = "" } = Astro.props;
+---
+
+<span class={`${className}`} set:html={text}></span>
+
+<script>
+  export default {
+    mounted() {
+      const elements = document.querySelectorAll('.typed-text');
+      elements.forEach(element => {
+        const text = element.textContent || '';
+        element.textContent = '';
+        let i = 0;
+        
+        const typeWriter = () => {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 50);
+          }
+        };
+        
+        setTimeout(typeWriter, 500);
+      });
+    }
+  }
+</script>

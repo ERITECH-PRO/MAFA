@@ -118,4 +118,15 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  /* In global.css */
+.cursor-blink {
+  border-right: 2px solid;
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { border-color: transparent }
+  50% { border-color: currentColor; }
+}
 }
