@@ -3,8 +3,11 @@ import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import compressor from "astro-compressor";
 import starlight from "@astrojs/starlight";
-
 import mdx from "@astrojs/mdx";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
@@ -128,5 +131,17 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+        "@components": path.resolve(__dirname, "./src/components"),
+        "@content": path.resolve(__dirname, "./src/content"),
+        "@data": path.resolve(__dirname, "./src/data_files"),
+        "@images": path.resolve(__dirname, "./src/images"),
+        "@scripts": path.resolve(__dirname, "./src/assets/scripts"),
+        "@styles": path.resolve(__dirname, "./src/assets/styles"),
+        "@utils": path.resolve(__dirname, "./src/utils"),
+      },
+    },
   },
 });
