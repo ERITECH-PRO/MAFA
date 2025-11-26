@@ -22,11 +22,12 @@ function getAccordionClass(first: boolean = false) {
 ---
 
 <!-- The main container for the accordion item -->
-<div class={getAccordionClass(first)} id={id}>
-  <!-- The accordion button, which toggles the expanded/collapsed state -->
-  <button
-    class="hs-accordion-toggle group inline-flex w-full items-center justify-between gap-x-3 text-balance rounded-lg pb-3 text-start font-bold text-neutral-800 outline-hidden ring-zinc-500 transition hover:text-neutral-500 focus-visible:ring-3 dark:text-neutral-200 dark:ring-zinc-200 dark:hover:text-neutral-400 dark:focus:outline-hidden md:text-lg"
+<div class={`${getAccordionClass(first)} faq-item`} id={id}>
+  <!-- The accordion header, which expands/collapses on hover -->
+  <div
+    class={`faq-header group inline-flex w-full items-center justify-between gap-x-3 text-balance rounded-lg pb-3 text-start font-bold text-neutral-800 transition hover:text-neutral-500 dark:text-neutral-200 dark:hover:text-neutral-400 md:text-lg cursor-pointer ${first ? 'hs-accordion-active' : ''}`}
     aria-controls={collapseId}
+    data-collapse-id={collapseId}
   >
     {question}
     <!-- SVG Icon that is shown when the accordion is NOT active -->
@@ -34,11 +35,11 @@ function getAccordionClass(first: boolean = false) {
 
     <!-- SVG Icon that is shown when the accordion is active -->
     <Icon name="accordionActive" />
-  </button>
+  </div>
   <!-- The collapsible content of the accordion -->
   <div
     aria-labelledby={id}
-    class={`${first ? ACCORDION_CONTENT_CLASS : "hidden " + ACCORDION_CONTENT_CLASS}`}
+    class={`faq-content ${first ? ACCORDION_CONTENT_CLASS : "hidden " + ACCORDION_CONTENT_CLASS}`}
     id={collapseId}
   >
     <!-- The content paragraph -->

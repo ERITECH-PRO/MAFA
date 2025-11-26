@@ -15,22 +15,27 @@ interface Props {
   features?: Feature[];
   src?: any;
   alt?: string;
+  width?: number;
+  height?: number;
 }
 // Define props from Astro
-const { title, subTitle, src, alt, features } = Astro.props;
+const { title, subTitle, src, alt, features, width, height } = Astro.props;
 ---
 
 <section
   class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 2xl:max-w-full"
 >
   <!-- Block to display the feature image -->
-  <div class="relative mb-6 overflow-hidden md:mb-8">
+  <div class="relative mb-6 flex justify-center overflow-hidden md:mb-8">
     {
       src && alt && (
         <Image
           src={src}
           alt={alt}
-          class="h-full w-full object-cover object-center"
+          width={width || 1200}
+          height={height || 800}
+          style={`width: ${width || 1200}px; height: ${height || 800}px; object-fit: contain;`}
+          class="object-center"
           draggable={"false"}
           format={"avif"}
           loading={"eager"}

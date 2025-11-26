@@ -3,7 +3,7 @@
 import { Image } from "astro:assets";
 
 // Destructure the component properties from Astro.props
-const { id, aria, src, alt, first, second } = Astro.props;
+const { id, aria, src, alt, first, second, video, width, height } = Astro.props;
 
 // Define TypeScript interface for the properties
 interface Props {
@@ -13,6 +13,9 @@ interface Props {
   alt: string;
   first?: boolean;
   second?: boolean;
+  video?: boolean;
+  width?: number;
+  height?: number;
 }
 // Set class based on 'first' property
 // If 'first' is present, show the tab content immediately
@@ -22,6 +25,11 @@ const firstClass = first ? "" : "hidden";
 const secondClass = second
   ? "shadow-xl aspect-5/4 bg-neutral-300 dark:bg-neutral-600 object-cover p-3 lg:aspect-auto shadow-neutral-200 rounded-xl dark:shadow-neutral-900/[.2]"
   : "shadow-xl aspect-3/2 object-cover lg:aspect-auto shadow-neutral-200 rounded-xl dark:shadow-neutral-900/[.2]";
+
+// Video-specific class that removes padding and makes it fit closer to container
+const videoClass = second
+  ? "w-full h-full object-cover rounded-xl"
+  : "w-full h-full object-cover rounded-xl";
 
 /*
 first: This property should be set to true for the initial TabContent component
@@ -42,13 +50,30 @@ This is the full example:
 
 <!-- Container for tab content that controls visibility and accessibility -->
 <div id={id} role="tabpanel" class={firstClass} aria-labelledby={aria}>
-  <!-- Astro Image component to display the image with dynamic classes based on the 'second' property -->
-  <Image
-    src={src}
-    alt={alt}
-    class={secondClass}
-    draggable={"false"}
-    format={"avif"}
-    loading={"eager"}
-  />
+  {video ? (
+    <!-- Video element -->
+    <video
+      src={typeof src === 'string' ? src : src?.src || src}
+      class={videoClass}
+      controls
+      autoplay
+      loop
+      muted
+      playsinline
+    >
+      Your browser does not support the video tag.
+    </video>
+  ) : (
+    <!-- Astro Image component to display the image with dynamic classes based on the 'second' property -->
+    <Image
+      src={src}
+      alt={alt}
+      width={width || 1200}
+      height={height || 800}
+      class={secondClass}
+      draggable={"false"}
+      format={"avif"}
+      loading={"eager"}
+    />
+  )}
 </div>

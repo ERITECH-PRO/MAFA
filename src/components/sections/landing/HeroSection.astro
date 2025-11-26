@@ -19,12 +19,15 @@ const {
   rating,
   reviews,
   src,
-  alt
+  alt,
+  width,
+  height
 } = Astro.props;
 
 // Define TypeScript interface for props
 interface Props {
   title: string;
+  rightText: string;
   subTitle?: string;
   primaryBtn?: string;
   primaryBtnURL?: string;
@@ -37,6 +40,8 @@ interface Props {
   reviews?: string;
   src?: any;
   alt?: string;
+  width?: number;
+  height?: number;
 }
 ---
 
@@ -48,11 +53,53 @@ interface Props {
   <div>
     <!-- Each h1 and p tag renders a portion of the title and subTitle defined above -->
     <h1
-class="text-4xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 sm:text-6xl">
-    
-      <!-- About Fragment: https://docs.astro.build/en/basics/astro-syntax/#fragments -->
-  <Fragment set:html={title.replace('typed-text', 'typed-text cursor-blink')} />
+      class="text-4xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 sm:text-6xl"
+    >
+      <span class="font-bold">MAFA — </span><span id="typed-rest" data-resttext={Astro.props.rightText}></span>
     </h1>
+    <script type="module" is:inline>
+      window.addEventListener('DOMContentLoaded', () => {
+        const el = document.getElementById('typed-rest');
+        if (el) {
+          const variants = (el.dataset.resttext || '').split('|').map(s => s.trim()).filter(Boolean);
+          if (!variants.length) return;
+          let v = 0;
+          const yellowClass = 'text-yellow-500 dark:text-yellow-400';
+          el.className = yellowClass;
+          function typeText(text, cb) {
+            el.textContent = '';
+            let i = 0;
+            function typeWriter() {
+              if (i < text.length) {
+                el.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+              } else if (cb) { setTimeout(cb, 1600); }
+            }
+            typeWriter();
+          }
+          function eraseText(cb) {
+            let len = el.textContent.length;
+            function erase() {
+              if (len > 0) {
+                el.textContent = el.textContent.slice(0, --len);
+                setTimeout(erase, 30);
+              } else if (cb) cb();
+            }
+            erase();
+          }
+          function loop() {
+            typeText(variants[v], () => {
+              eraseText(() => {
+                v = (v + 1) % variants.length;
+                loop();
+              });
+            });
+          }
+          setTimeout(loop, 300);
+        }
+      });
+    </script>
     {subTitle &&
     <p
       class="mt-3 text-pretty text-lg leading-relaxed text-neutral-700 dark:text-neutral-400 lg:w-4/5"
@@ -83,6 +130,8 @@ class="text-4xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 
 	<Image
         src={src}
         alt={alt}
+        width={width || 1200}
+        height={height || 800}
         class="h-full w-full scale-110 object-cover object-center"
         draggable={"false"}
         loading={"eager"}

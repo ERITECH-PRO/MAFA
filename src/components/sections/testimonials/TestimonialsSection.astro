@@ -64,7 +64,7 @@ type StatProps = {
     <div class="mt-10 lg:col-span-6 lg:col-end-13 lg:mt-0">
       <div class="space-y-6 sm:space-y-8">
         <ul
-          class="grid grid-cols-2 divide-x-2 divide-y-2 divide-neutral-300 overflow-hidden dark:divide-neutral-700"
+          class="grid grid-cols-2 divide-x-2 divide-y-2 divide-neutral-300 dark:divide-neutral-700"
         >
           <!-- Generate a list item for each stat in the statistics array by mapping over the array. -->
           {
@@ -78,3 +78,42 @@ type StatProps = {
   }
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('.stat-counter[data-is-number="true"]');
+    
+    counters.forEach(element => {
+      const target = parseInt(element.getAttribute('data-target') || '0');
+      const suffix = element.getAttribute('data-suffix') || '';
+      const duration = 2000; // 2 seconds
+      const steps = 60;
+      const increment = target / steps;
+      let current = 0;
+      let step = 0;
+      
+      // Use Intersection Observer to trigger animation when element is visible
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !element.hasAttribute('data-animated')) {
+            element.setAttribute('data-animated', 'true');
+            
+            const timer = setInterval(() => {
+              step++;
+              current = Math.min(Math.floor(increment * step), target);
+              
+              if (current >= target) {
+                current = target;
+                clearInterval(timer);
+              }
+              
+              element.textContent = current + suffix;
+            }, duration / steps);
+          }
+        });
+      }, { threshold: 0.5 });
+      
+      observer.observe(element);
+    });
+  });
+</script>

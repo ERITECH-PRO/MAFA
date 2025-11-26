@@ -8,6 +8,35 @@ interface Props {
   description: string;
   index: number;
 }
+
+// Extract numeric value and suffix from count string
+function parseCount(countStr: string): { value: number; suffix: string; isNumber: boolean } {
+  // Check if it's a percentage
+  if (countStr.includes('%')) {
+    const num = parseInt(countStr.replace('%', ''));
+    return { value: num || 0, suffix: '%', isNumber: true };
+  }
+  // Check if it has a + sign
+  if (countStr.includes('+')) {
+    const num = parseInt(countStr.replace('+', ''));
+    return { value: num || 0, suffix: '+', isNumber: true };
+  }
+  // Check if it's "24/7" format
+  if (countStr.includes('/')) {
+    return { value: 0, suffix: countStr, isNumber: false };
+  }
+  // Try to extract number from strings like "15 countries"
+  const match = countStr.match(/\d+/);
+  if (match) {
+    const num = parseInt(match[0]);
+    const suffix = countStr.replace(match[0], '').trim();
+    return { value: num || 0, suffix: suffix || '', isNumber: true };
+  }
+  // If no number found, return as-is
+  return { value: 0, suffix: countStr, isNumber: false };
+}
+
+const parsed = parseCount(count);
 ---
 
 <li class="-m-0.5 flex flex-col p-4 sm:p-8">
@@ -15,7 +44,14 @@ interface Props {
     class="mb-2 flex items-end gap-x-2 text-3xl font-bold text-neutral-800 dark:text-neutral-200 sm:text-5xl"
   >
     {index === 1 || index === 2 ? <Icon name="arrowUp" /> : null}
-    {count}
+    <span 
+      class="stat-counter whitespace-nowrap"
+      data-target={parsed.value} 
+      data-suffix={parsed.suffix} 
+      data-is-number={String(parsed.isNumber)}
+    >
+      {parsed.isNumber ? '0' + parsed.suffix : count}
+    </span>
   </div>
   <p class="text-sm text-neutral-600 dark:text-neutral-400 sm:text-base">
     {description}

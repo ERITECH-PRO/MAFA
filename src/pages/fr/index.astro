@@ -9,7 +9,11 @@ import FeaturesNavs from "@components/sections/features/FeaturesNavs.astro";
 import TestimonialsSection from "@components/sections/testimonials/TestimonialsSection.astro";
 import PricingSection from "@components/sections/pricing/PricingSection.astro";
 import FAQ from "@components/sections/misc/FAQ.astro";
-import heroImage from "@images/hero-image.avif";
+import heroImage from "@images/marmite.png";
+import forafricain from "@images/new/africa.png";
+import mafa from "@images/new/mafa.mp4";
+import formation from "@images/new/mafa1.jfif";
+import quality from "@images/new/mafa2.jfif";
 import faqs from "@data/fr/faqs.json";
 import features from "@data/fr/features.json";
 import pricing from "@data/fr/pricing.json";
@@ -30,7 +34,8 @@ const avatarSrcs: Array<string> = [
 
 <MainLayout lang="fr">
   <HeroSection
-    title=`MAFA — <span class="text-yellow-500 dark:text-yellow-400">Multisectorielle & Innovante</span>`
+    title="MAFA —"
+    rightText="Multisectorielle|Innovante"
     subTitle="L'excellence au service de la restauration, de la logistique et du développement durable. MAFA est une entreprise multisectorielle engagée en Afrique dans six domaines complémentaires : restauration, nettoyage, logistique hôtelière, formation culinaire, transformation agroalimentaire, conseil & maintenance. Elle incarne qualité, expertise et engagement."
     primaryBtn="Découvrir MAFA"
     primaryBtnURL={getRelativeLocaleUrl("fr", "services")}
@@ -39,50 +44,59 @@ const avatarSrcs: Array<string> = [
     withReview={false}
     src={heroImage}
     alt="MAFA - Entreprise multisectorielle innovante"
+    width={500}
+    height={500}
   />
 
-  <ClientsSection
+  <!-- <ClientsSection
     title="Faites confiance aux leaders de l'industrie"
     subTitle="Découvrez la fiabilité choisie par les géants de l'industrie."
     partners={partnersData}
-  />
+  /> -->
 
   <FeaturesGeneral
     title="Aperçu des 6 pôles"
     subTitle="Découvrez nos six domaines d'expertise complémentaires qui font de MAFA un partenaire de choix pour vos projets en Afrique."
-    src={featureImage}
+    src={forafricain}
     alt="Les six pôles d'activité de MAFA"
+    width={500}
+    height={500}
     features={features}
   />
 
   <FeaturesNavs
-    title={`Adaptez les solutions <span class="text-yellow-500 dark:text-yellow-400">MAFA</span> à vos opérations, de la restauration à la logistique.`}
+    title="Adaptez les solutions MAFA à vos besoins"
     tabs={[
       {
-        heading: "Pilotage & supervision",
+        heading: "Restauration & Services alimentaires",
         content:
-          "Planification, supervision terrain et reporting QHSE en temps réel pour sécuriser vos sites et base-vie MAFA.",
+          "Solutions de restauration sur mesure pour sites miniers, hôpitaux, institutions et événements. Services sûrs, hygiéniques et cohérents partout où nos partenaires opèrent.",
         svg: "tools",
-        src: tools,
-        alt: "Équipes MAFA en supervision",
+        src: mafa,
+        alt: "Services de restauration MAFA",
         first: true,
+        video: true,
       },
       {
-        heading: "Logistique & traçabilité",
+        heading: "Formation culinaire & Placement",
         content:
-          "Chaînes d’approvisionnement optimisées, indicateurs qualité et distribution maîtrisée pour vos équipements hôteliers et denrées.",
+          "Programmes de formation certifiés pour cuisiniers et chefs, suivis d'un placement dans hôtels, restaurants et institutions partenaires. Théorie, pratique intensive et coaching de carrière.",
         svg: "dashboard",
-        src: dashboard,
-        alt: "Solutions logistiques MAFA",
+        src: formation,
+        alt: "Formation culinaire MAFA",
         second: true,
+        width: 1200,
+        height: 800,
       },
       {
-        heading: "Qualité & conformité",
+        heading: "Qualité & Conformité QHSE",
         content:
-          "Procédures QHSE, audits et formation continue pour garantir des standards internationaux en restauration et services supports.",
+          "Procédures QHSE rigoureuses, audits réguliers et formation continue pour garantir des standards internationaux dans tous nos secteurs d'activité.",
         svg: "house",
-        src: construction,
-        alt: "Contrôles qualité MAFA",
+        src: quality,
+        alt: "Standards qualité MAFA",
+        width: 1200,
+        height: 800,
       },
     ]}
   />
@@ -129,7 +143,7 @@ const avatarSrcs: Array<string> = [
 
   <HeroSectionAlt
     title="Construisons ensemble"
-    subTitle="ScrewFast est un modèle open source, méticuleusement conçu avec les frameworks Astro, Tailwind CSS et Preline UI."
-    url="https://github.com/mearashadowfax/ScrewFast"
+    subTitle="MAFA est une entreprise multisectorielle innovante, méticuleusement conçue avec les frameworks Astro, Tailwind CSS et Preline UI."
+    url="/contact"
   />
 </MainLayout>

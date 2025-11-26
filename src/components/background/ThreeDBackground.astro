@@ -12,7 +12,19 @@
 <script>
   // This code runs when the component mounts in the browser
   document.addEventListener('DOMContentLoaded', async () => {
-    const { initThreeBackground } = await import("@scripts/three-background.js");
-    initThreeBackground();
+    // Load Three.js if not already loaded
+    // @ts-ignore - THREE is loaded dynamically from CDN
+    if (typeof window !== 'undefined' && typeof window.THREE === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      script.onload = async () => {
+        const { initThreeBackground } = await import("../../assets/scripts/three-background.js");
+        initThreeBackground();
+      };
+      document.head.appendChild(script);
+    } else {
+      const { initThreeBackground } = await import("../../assets/scripts/three-background.js");
+      initThreeBackground();
+    }
   });
 </script>

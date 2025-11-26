@@ -72,3 +72,37 @@ const makeId = (base: any, index: any) => `${base}${index + 1}`;
     </div>
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const faqHeaders = document.querySelectorAll('.faq-header');
+    
+    faqHeaders.forEach(header => {
+      header.addEventListener('mouseenter', () => {
+        const faqItem = header.closest('.faq-item');
+        const faqContent = faqItem?.querySelector('.faq-content');
+        
+        if (!faqItem || !faqContent) return;
+        
+        // Close all other FAQ items
+        const allFaqItems = document.querySelectorAll('.faq-item');
+        allFaqItems.forEach(item => {
+          if (item !== faqItem) {
+            const content = item.querySelector('.faq-content');
+            const itemHeader = item.querySelector('.faq-header');
+            if (content && itemHeader) {
+              content.classList.add('hidden');
+              item.classList.remove('active');
+              itemHeader.classList.remove('hs-accordion-active');
+            }
+          }
+        });
+        
+        // Open this FAQ item
+        faqContent.classList.remove('hidden');
+        faqItem.classList.add('active');
+        header.classList.add('hs-accordion-active');
+      });
+    });
+  });
+</script>

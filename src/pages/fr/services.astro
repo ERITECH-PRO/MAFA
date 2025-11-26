@@ -8,15 +8,15 @@ import FeaturesStats from "@components/sections/features/FeaturesStats.astro";
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 // Import necessary images
-import blueprints from "@images/blueprints-image.avif";
-import personWorking from "@images/person-working.avif";
-import beforeAfter from "@images/before-after.avif";
-import constructionWorkers from "@images/construction-workers.avif";
-import aerialView from "@images/aerial-view.avif";
-import usingTools from "@images/using-tools.avif";
-import progressBuilding from "@images/progress-building.avif";
-import underConstruction from "@images/under-construction.avif";
-import dashboard from "@images/dashboard-image.avif";
+import catering from "@images/new/catering.jfif";
+import cleaning from "@images/new/cleaning.jfif";
+import cleaning1 from "@images/new/cleaning1.jfif";
+import hotel from "@images/new/hotel.jfif";
+import culinaryTraining from "@images/new/culinary.jfif";
+import culinaryTraining1 from "@images/new/culinary1.jfif";
+import agroProcessing from "@images/new/food.jfif";
+import consulting from "@images/new/consulting.jfif";
+import consulting1 from "@images/new/consulting1.jfif";
 
 interface Article {
   isRightSection: boolean;
@@ -40,11 +40,11 @@ const articles: Article[] = [
     title: "Restauration & Catering multisectoriel",
     subTitle:
       "MAFA propose des solutions de restauration pour les chantiers, mines, hôpitaux, institutions et événements. Une expertise logistique et sanitaire rigoureuse garantit un service fiable et constant.",
-    img: personWorking,
+    img: catering,
     imgAlt: "Service de restauration et catering MAFA",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
   {
     isRightSection: true,
@@ -52,24 +52,24 @@ const articles: Article[] = [
     subTitle:
       "Prestations de nettoyage industriel, bureaux, hôtels, cuisines, hôpitaux. Des équipes formées et des produits certifiés garantissent des environnements sains et conformes aux normes QHSE.",
     single: false,
-    imgOne: usingTools,
+    imgOne: cleaning,
     imgOneAlt: "Équipe de nettoyage professionnel",
-    imgTwo: beforeAfter,
+    imgTwo: cleaning1,
     imgTwoAlt: "Nettoyage et entretien professionnel",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
   {
     isRightSection: false,
     title: "Fourniture & Logistique hôtelière",
     subTitle:
       "Approvisionnement et livraison de matériels, consommables, équipements hôteliers et cuisines professionnelles.",
-    img: dashboard,
+    img: hotel,
     imgAlt: "Logistique et fourniture hôtelière",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
   {
     isRightSection: true,
@@ -77,24 +77,24 @@ const articles: Article[] = [
     subTitle:
       "MAFA forme des cuisiniers qualifiés, puis les place dans des structures partenaires (restaurants, hôtels, chantiers). Programme complet : théorie, pratique, certification, insertion.",
     single: false,
-    imgOne: constructionWorkers,
+    imgOne: culinaryTraining,
     imgOneAlt: "Formation culinaire MAFA",
-    imgTwo: blueprints,
+    imgTwo: culinaryTraining1,
     imgTwoAlt: "Programme de formation et placement",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
   {
     isRightSection: false,
     title: "Transformation & Production agroalimentaire",
     subTitle:
       "MAFA développe une activité de transformation de produits locaux en denrées alimentaires à valeur ajoutée. L'objectif : soutenir les circuits courts et renforcer la sécurité alimentaire.",
-    img: progressBuilding,
+    img: agroProcessing,
     imgAlt: "Transformation et production agroalimentaire",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
   {
     isRightSection: true,
@@ -102,13 +102,13 @@ const articles: Article[] = [
     subTitle:
       "Accompagnement des structures dans la mise en œuvre de services supports (restauration, nettoyage, maintenance). MAFA agit aussi comme facilitateur de partenariats africains durables.",
     single: false,
-    imgOne: aerialView,
+    imgOne: consulting,
     imgOneAlt: "Conseil et accompagnement MAFA",
-    imgTwo: underConstruction,
+    imgTwo: consulting1,
     imgTwoAlt: "Partenariats et maintenance",
     btnExists: true,
     btnTitle: "En savoir plus",
-    btnURL: "#",
+    btnURL: getRelativeLocaleUrl("fr", "contact"),
   },
 ];
 ---
@@ -159,6 +159,8 @@ const articles: Article[] = [
           imgOneAlt={article.imgOneAlt}
           imgTwo={article.imgTwo}
           imgTwoAlt={article.imgTwoAlt}
+          width={1200}
+          height={800}
           btnExists={article.btnExists}
           btnTitle={article.btnTitle}
           btnURL={article.btnURL}
@@ -169,6 +171,8 @@ const articles: Article[] = [
           subTitle={article.subTitle}
           img={article.img}
           imgAlt={article.imgAlt}
+          width={1200}
+          height={800}
           btnExists={article.btnExists}
           btnTitle={article.btnTitle}
           btnURL={article.btnURL}

@@ -8,7 +8,15 @@ import FeaturesStats from "@components/sections/features/FeaturesStats.astro";
 
 // Import necessary images
 import blueprints from "@images/blueprints-image.avif";
-import personWorking from "@images/person-working.avif";
+import catering from "@images/new/catering.jfif";
+import cleaning from "@images/new/cleaning.jfif";
+import cleaning1 from "@images/new/cleaning1.jfif";
+import hotel from "@images/new/hotel.jfif";
+import culinaryTraining from "@images/new/culinary.jfif";
+import culinaryTraining1 from "@images/new/culinary1.jfif";
+import agroProcessing from "@images/new/food.jfif";
+import consulting from "@images/new/consulting.jfif";
+import consulting1 from "@images/new/consulting1.jfif";
 import beforeAfter from "@images/before-after.avif";
 import constructionWorkers from "@images/construction-workers.avif";
 import aerialView from "@images/aerial-view.avif";
@@ -39,7 +47,7 @@ const articles: Article[] = [
     title: "Catering & Multisector Food Services",
     subTitle:
       "MAFA delivers tailored food solutions to mining sites, hospitals, institutions, and events. We guarantee safe, hygienic, and consistent catering services wherever our partners operate.",
-    img: personWorking,
+    img: catering,
     imgAlt: "MAFA catering operations on site",
     btnExists: true,
     btnTitle: "Learn more",
@@ -51,9 +59,9 @@ const articles: Article[] = [
     subTitle:
       "Industrial cleaning services for offices, hotels, kitchens, and hospitals, led by trained personnel using certified eco-friendly products to maintain spotless, compliant environments.",
     single: false,
-    imgOne: usingTools,
+    imgOne: cleaning,
     imgOneAlt: "Team performing professional cleaning",
-    imgTwo: beforeAfter,
+    imgTwo: cleaning1,
     imgTwoAlt: "Before and after cleaning results",
     btnExists: true,
     btnTitle: "Learn more",
@@ -64,7 +72,7 @@ const articles: Article[] = [
     title: "Hotel Supply & Logistics",
     subTitle:
       "Sourcing and nationwide delivery of hotel equipment, consumables, and kitchen materials, ensuring every property receives the right inventory at the right time.",
-    img: blueprints,
+    img: hotel,
     imgAlt: "Logistics planning for hotel supplies",
     btnExists: true,
     btnTitle: "Learn more",
@@ -76,9 +84,9 @@ const articles: Article[] = [
     subTitle:
       "Certified training programs for cooks and chefs, followed by placement in hotels, restaurants, and partner institutions. Each curriculum blends theory, intensive practice, and career coaching.",
     single: false,
-    imgOne: constructionWorkers,
+    imgOne: culinaryTraining,
     imgOneAlt: "Culinary trainees in practice",
-    imgTwo: aerialView,
+    imgTwo: culinaryTraining1,
     imgTwoAlt: "Partner network supporting placement",
     btnExists: true,
     btnTitle: "Learn more",
@@ -89,7 +97,7 @@ const articles: Article[] = [
     title: "Food Processing & Agro-industrial Production",
     subTitle:
       "Processing of local agricultural products into value-added food items, promoting short supply chains, food security, and new market opportunities for producers.",
-    img: progressBuilding,
+    img: agroProcessing,
     imgAlt: "Agro-processing facility",
     btnExists: true,
     btnTitle: "Learn more",
@@ -101,9 +109,9 @@ const articles: Article[] = [
     subTitle:
       "Strategic support to design, implement, or enhance service chains. MAFA also facilitates sustainable African partnerships with dedicated maintenance and follow-up.",
     single: false,
-    imgOne: underConstruction,
+    imgOne: consulting,
     imgOneAlt: "Team providing maintenance support",
-    imgTwo: progressBuilding,
+    imgTwo: consulting1,
     imgTwoAlt: "Strategic partner collaboration",
     btnExists: true,
     btnTitle: "Learn more",
@@ -166,6 +174,8 @@ const ogTitle = "Integrated Services | MAFA";
           imgOneAlt={article.imgOneAlt}
           imgTwo={article.imgTwo}
           imgTwoAlt={article.imgTwoAlt}
+          width={1200}
+          height={800}
           btnExists={article.btnExists}
           btnTitle={article.btnTitle}
           btnURL={article.btnURL}
@@ -176,6 +186,8 @@ const ogTitle = "Integrated Services | MAFA";
           subTitle={article.subTitle}
           img={article.img}
           imgAlt={article.imgAlt}
+          width={1200}
+          height={800}
           btnExists={article.btnExists}
           btnTitle={article.btnTitle}
           btnURL={article.btnURL}

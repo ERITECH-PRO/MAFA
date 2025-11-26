@@ -14,6 +14,12 @@ const {
   imgOneAlt,
   imgTwo,
   imgTwoAlt,
+  width,
+  height,
+  imgOneWidth,
+  imgOneHeight,
+  imgTwoWidth,
+  imgTwoHeight,
 } = Astro.props;
 // Define TypeScript interface for the properties
 interface Props {
@@ -27,6 +33,12 @@ interface Props {
   imgOneAlt?: any;
   imgTwo?: any;
   imgTwoAlt?: any;
+  width?: number;
+  height?: number;
+  imgOneWidth?: number;
+  imgOneHeight?: number;
+  imgTwoWidth?: number;
+  imgTwoHeight?: number;
 }
 ---
 <!-- Root section of the component -->
@@ -58,6 +70,8 @@ interface Props {
           class="w-full rounded-lg"
           src={imgOne}
           alt={imgOneAlt}
+          width={imgOneWidth || width || 1200}
+          height={imgOneHeight || height || 800}
           format={"avif"}
         />
       </div>
@@ -68,6 +82,8 @@ interface Props {
           class="w-full rounded-xl"
           src={imgOne}
           alt={imgOneAlt}
+          width={imgOneWidth || width || 1200}
+          height={imgOneHeight || height || 800}
           draggable={"false"}
           format={"avif"}
         />
@@ -76,6 +92,8 @@ interface Props {
           class="mt-4 w-full rounded-xl lg:mt-10"
           src={imgTwo}
           alt={imgTwoAlt}
+          width={imgTwoWidth || width || 1200}
+          height={imgTwoHeight || height || 800}
           draggable={"false"}
           format={"avif"}
         />
