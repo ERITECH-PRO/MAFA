@@ -2,7 +2,7 @@
 title: "MAFA transforme les produits locaux en opportunités"
 description: "Zoom sur notre activité agroalimentaire à impact."
 author: "Équipe MAFA"
-authorImage: "@/images/blog/anna.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-09-20
 cardImage: "@/images/new/transform.png"

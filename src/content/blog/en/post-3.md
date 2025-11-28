@@ -2,7 +2,7 @@
 title: "Turning Local Crops into Market Opportunities"
 description: "MAFA's role in sustainable food processing."
 author: "MAFA Team"
-authorImage: "@/images/blog/anna.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-09-20
 cardImage: "@/images/new/transform.png"

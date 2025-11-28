@@ -2,7 +2,7 @@
 title: "Culinary Training & Recruitment with MAFA"
 description: "A complete solution for culinary skill development and job placement."
 author: "MAFA Team"
-authorImage: "@/images/blog/brad.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-10-15
 cardImage: "@/images/new/pratique.png"

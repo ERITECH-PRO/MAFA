@@ -2,7 +2,7 @@
 title: "Comment organiser un service de catering en milieu minier ?"
 description: "Bonnes pratiques, logistique et hygiène pour servir des repas sur site."
 author: "Équipe MAFA"
-authorImage: "@/images/blog/jacob.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-11-01
 cardImage: "@/images/new/pratique.png"

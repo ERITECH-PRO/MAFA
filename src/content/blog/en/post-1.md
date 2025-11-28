@@ -2,7 +2,7 @@
 title: "Best Practices for Mining Site Catering Operations"
 description: "How to ensure safe, reliable food service in remote locations."
 author: "MAFA Team"
-authorImage: "@/images/blog/jacob.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-11-01
 cardImage: "@/images/new/recruter.png"

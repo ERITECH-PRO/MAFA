@@ -1,0 +1,45 @@
+# Dépendances
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+.astro
+.vercel
+.output
+
+# Fichiers de développement
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Cache
+.cache
+.parcel-cache
+
+# Autres
+README.md
+LICENSE
+CODE_OF_CONDUCT.md
+

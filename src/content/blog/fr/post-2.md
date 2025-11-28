@@ -2,7 +2,7 @@
 title: "Recruter des cuisiniers qualifiés grâce à MAFA"
 description: "La formation et le placement au cœur du dispositif de MAFA."
 author: "Équipe MAFA"
-authorImage: "@/images/blog/brad.avif"
+authorImage: "@/images/new/transform.png"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-10-15
 cardImage: "@/images/new/recruter.png"
