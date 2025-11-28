@@ -13,6 +13,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   // https://docs.astro.build/en/guides/images/#authorizing-remote-images
   site: "https://nathy-graph.com",
+  devToolbar: {
+    enabled: false,
+  },
   image: {
     domains: ["images.unsplash.com"],
   },
