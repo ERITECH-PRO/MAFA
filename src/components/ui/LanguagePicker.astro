@@ -33,7 +33,8 @@ import Icon from "./icons/Icon.astro";
       Object.entries(languages).map(([lang, label]) => (
         <a
           class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-neutral-800 hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-hidden dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-          href={`/${lang === "en" ? "" : lang}`}
+          href="#"
+          data-lang={lang}
         >
           {label}
         </a>
@@ -54,29 +55,34 @@ import Icon from "./icons/Icon.astro";
     
     languageLinks.forEach((element) => {
       const link = element as HTMLAnchorElement;
-      const lang = link
-        .getAttribute("href")
-        ?.replace("/", "")
-        .replace("/", "") as TLanguage;
+      const targetLang = link.getAttribute("data-lang") as TLanguage;
 
       link.addEventListener("click", function (event) {
         event.preventDefault();
 
         const url = new URL(window.location.href);
         
-        const currentPath = url.pathname
-          .split("/")
-          .filter((part) => part && !languages.includes(part as TLanguage))
-          .join("/");
+        // Get current path and determine current language
+        const pathParts = url.pathname.split("/").filter(part => part);
+        const isCurrentlyFrench = pathParts[0] === "fr";
+        const pathWithoutLang = isCurrentlyFrench 
+          ? pathParts.slice(1).join("/")
+          : pathParts.join("/");
 
+        // Build new path based on target language
+        // English pages are at root, French pages are at /fr/
         let newPath = "";
-        if (lang && lang !== "en") {
-          newPath = `/${lang}/${currentPath}`;
+        if (targetLang === "fr") {
+          // Switching to French: add /fr/ prefix
+          newPath = pathWithoutLang ? `/fr/${pathWithoutLang}` : "/fr/";
         } else {
-          newPath = `/${currentPath}`;
+          // Switching to English: remove /fr/ prefix, go to root
+          newPath = pathWithoutLang ? `/${pathWithoutLang}` : "/";
         }
 
+        // Clean up path
         newPath = newPath.replace(/\/+/g, "/");
+        if (newPath === "/fr") newPath = "/fr/";
         if (newPath === "") newPath = "/";
         
         window.location.href = `${url.origin}${newPath}${url.search}`;

@@ -28,8 +28,8 @@ const secondClass = second
 
 // Video-specific class that removes padding and makes it fit closer to container
 const videoClass = second
-  ? "w-full h-full object-cover rounded-xl"
-  : "w-full h-full object-cover rounded-xl";
+  ? "w-full h-full max-h-[500px] object-cover rounded-xl"
+  : "w-full h-full max-h-[500px] object-cover rounded-xl";
 
 /*
 first: This property should be set to true for the initial TabContent component
@@ -49,7 +49,7 @@ This is the full example:
 ---
 
 <!-- Container for tab content that controls visibility and accessibility -->
-<div id={id} role="tabpanel" class={firstClass} aria-labelledby={aria}>
+<div id={id} role="tabpanel" class={`tab-content ${firstClass}`} aria-labelledby={aria}>
   {video ? (
     <!-- Video element -->
     <video
@@ -64,16 +64,59 @@ This is the full example:
       Your browser does not support the video tag.
     </video>
   ) : (
-    <!-- Astro Image component to display the image with dynamic classes based on the 'second' property -->
-    <Image
-      src={src}
-      alt={alt}
+  <!-- Astro Image component to display the image with dynamic classes based on the 'second' property -->
+  <Image
+    src={src}
+    alt={alt}
       width={width || 1200}
-      height={height || 800}
-      class={secondClass}
-      draggable={"false"}
-      format={"avif"}
-      loading={"eager"}
-    />
+    height={height || 800}
+    class={`${secondClass} max-h-[500px] object-contain`}
+    draggable={"false"}
+    format={"avif"}
+    loading={"eager"}
+  />
   )}
 </div>
+
+<style>
+  .tab-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-height: 500px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    will-change: opacity;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+  
+  @media (min-width: 1024px) {
+    .tab-content {
+      left: 2rem;
+      width: calc(100% - 2rem);
+    }
+  }
+  
+  .tab-content.hidden {
+    display: none;
+    opacity: 0;
+  }
+  
+  .tab-content:not(.hidden) {
+    display: flex;
+    opacity: 1;
+  }
+  
+  .tab-content video,
+  .tab-content img {
+    max-height: 500px;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    margin-left: 0;
+  }
+</style>

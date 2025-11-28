@@ -11,6 +11,12 @@ import PricingSection from "@components/sections/pricing/PricingSection.astro";
 import FAQ from "@components/sections/misc/FAQ.astro";
 import heroImage from "@images/marmite.png";
 import forafricain from "@images/new/africa.png";
+import forafricaJfif from "@images/new/forafrica.png";
+import nettoyage from "@images/new/nettoyage.png";
+import hotel from "@images/new/hotel.png"
+import formation2 from "@images/new/formation.png"
+import foodImage from "@images/new/food.png";
+import foodImage2 from "@images/new/food2.png";
 import mafa from "@images/new/mafa.mp4";
 import formation from "@images/new/mafa1.jfif";
 import quality from "@images/new/mafa2.jfif";
@@ -82,8 +88,14 @@ const localizedFeatures = features.map((feature) => {
         ? "Explorez les six pôles complémentaires qui font de MAFA un partenaire de référence en Afrique."
         : "Discover the six complementary fields that make MAFA a trusted partner across Africa."
     }
-    src={forafricain}
-    alt="MAFA's six activity areas"
+    images={[
+      { src: forafricain, alt: isFrench ? "Carte de l'Afrique - Présence MAFA" : "Africa map - MAFA presence" },
+      { src: nettoyage, alt: isFrench ? "Transformation agroalimentaire MAFA" : "MAFA agro-food processing" },
+      { src: hotel, alt: isFrench ? "Transformation agroalimentaire MAFA" : "MAFA agro-food processing" },
+      { src: formation2, alt: isFrench ? "Carte de l'Afrique - Présence MAFA" : "Africa map - MAFA presence" },
+      { src: formation2, alt: isFrench ? "Transformation agroalimentaire MAFA" : "MAFA agro-food processing" },
+      { src: foodImage2, alt: isFrench ? "Transformation agroalimentaire MAFA" : "MAFA agro-food processing" },
+    ]}
     width={500}
     height={500}
     features={localizedFeatures}
@@ -182,11 +194,11 @@ const localizedFeatures = features.map((feature) => {
     ]}
   />
 
-  <PricingSection pricing={pricing} />
+  <!-- <PricingSection pricing={pricing} /> -->
 
   <FAQ title="Frequently<br />asked questions" faqs={faqs} />
 
-  <HeroSectionAlt
+  <!-- <HeroSectionAlt
     title={
       isFrench
         ? "Construisons ensemble avec MAFA"
@@ -198,5 +210,5 @@ const localizedFeatures = features.map((feature) => {
         : "Integrated catering, logistics, and support services across Africa."
     }
     url="/contact"
-  />
+  /> -->
 </MainLayout>

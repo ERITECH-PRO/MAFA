@@ -33,14 +33,14 @@ const otherPosts: CollectionEntry<"blog">[] = blogPosts.slice(1);
 const isFrench = Astro.currentLocale === "fr";
 const title: string = isFrench ? "Actualités MAFA" : "MAFA News";
 const subTitle: string = isFrench
-  ? "Explorez nos articles sur l’innovation, la formation, les événements et les partenariats qui façonnent notre impact."
-  : "Explore our articles about innovation, training, events, and partnerships shaping MAFA’s impact.";
+  ? "Explorez les dernières actualités, conseils et analyses de MAFA pour améliorer vos projets en restauration, nettoyage professionnel, logistique hôtelière, formation culinaire, transformation agroalimentaire et services stratégiques. Notre blog est votre ressource incontournable pour tout ce qui concerne nos six secteurs d'activité."
+  : "Explore the latest news, tips, and insights from MAFA to enhance your projects in catering, professional cleaning, hotel logistics, culinary training, food processing, and strategic services. Our blog is your go-to resource for all things related to our six complementary activity sectors.";
 const secondTitle: string = isFrench
-  ? "Regards & Expertises"
-  : "Insights & Voices";
+  ? "Perspectives"
+  : "Insights";
 const secondSubTitle: string = isFrench
-  ? "Analyses, retours d’expérience et visions d’avenir portés par nos équipes et partenaires."
-  : "Analyses, field feedback, and future outlooks from MAFA teams and partners.";
+  ? "Restez à jour avec les dernières tendances et évolutions dans les secteurs de la restauration, du nettoyage professionnel, de la logistique hôtelière, de la formation culinaire, de la transformation agroalimentaire et des services stratégiques grâce aux analyses de l'équipe d'experts de MAFA."
+  : "Stay up-to-date with the latest trends and developments in catering, professional cleaning, hotel logistics, culinary training, food processing, and strategic services with insights from MAFA's team of industry experts.";
 
 const pageTitle: string = isFrench
   ? `Actualités | ${SITE.title}`

@@ -5,7 +5,7 @@ author: "Équipe MAFA"
 authorImage: "@/images/blog/jacob.avif"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-11-01
-cardImage: "@/images/blog/post-1.avif"
+cardImage: "@/images/new/pratique.png"
 cardImageAlt: "Cuisine collective sur chantier minier"
 readTime: 5
 tags: ["catering", "milieu minier", "logistique", "hygiène"]

@@ -11,6 +11,11 @@ import PricingSection from "@components/sections/pricing/PricingSection.astro";
 import FAQ from "@components/sections/misc/FAQ.astro";
 import heroImage from "@images/marmite.png";
 import forafricain from "@images/new/africa.png";
+import forafricaJfif from "@images/new/forafrica.png";
+import foodImage from "@images/new/food.png";
+import nettoyage from "@images/new/nettoyage.png";
+import hotel from "@images/new/hotel.png"
+import formation2 from "@images/new/formation.png"
 import mafa from "@images/new/mafa.mp4";
 import formation from "@images/new/mafa1.jfif";
 import quality from "@images/new/mafa2.jfif";
@@ -57,8 +62,14 @@ const avatarSrcs: Array<string> = [
   <FeaturesGeneral
     title="Aperçu des 6 pôles"
     subTitle="Découvrez nos six domaines d'expertise complémentaires qui font de MAFA un partenaire de choix pour vos projets en Afrique."
-    src={forafricain}
-    alt="Les six pôles d'activité de MAFA"
+    images={[
+      { src: forafricain, alt: "Carte de l'Afrique - Présence MAFA" },
+      { src: nettoyage, alt: "Transformation agroalimentaire MAFA" },
+      { src: hotel, alt: "Transformation agroalimentaire MAFA" },
+      { src: formation2, alt: "Carte de l'Afrique - Présence MAFA" },
+      { src: formation2, alt: "Transformation agroalimentaire MAFA" },
+      { src: foodImage, alt: "Transformation agroalimentaire MAFA" },
+    ]}
     width={500}
     height={500}
     features={features}
@@ -137,13 +148,13 @@ const avatarSrcs: Array<string> = [
     ]}
   />
 
-  <PricingSection pricing={pricing} />
+  <!-- <PricingSection pricing={pricing} /> -->
 
   <FAQ title="Questions<br />fréquemment posées" faqs={faqs} />
 
-  <HeroSectionAlt
+  <!-- <HeroSectionAlt
     title="Construisons ensemble"
     subTitle="MAFA est une entreprise multisectorielle innovante, méticuleusement conçue avec les frameworks Astro, Tailwind CSS et Preline UI."
     url="/contact"
-  />
+  /> -->
 </MainLayout>

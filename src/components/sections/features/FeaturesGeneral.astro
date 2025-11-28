@@ -17,44 +17,392 @@ interface Props {
   alt?: string;
   width?: number;
   height?: number;
+  images?: Array<{ src: any; alt: string }>;
 }
 // Define props from Astro
-const { title, subTitle, src, alt, features, width, height } = Astro.props;
+const { title, subTitle, src, alt, features, width, height, images } = Astro.props;
+
+// If images array is provided, use it; otherwise use single src
+// Filter out any invalid images
+const imageList = images && images.length > 0 
+  ? images.filter(img => img && img.src) 
+  : (src ? [{ src, alt: alt || '' }] : []).filter(img => img && img.src);
 ---
 
 <section
   class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 2xl:max-w-full"
 >
-  <!-- Block to display the feature image -->
-  <div class="relative mb-6 flex justify-center overflow-hidden md:mb-8">
-    {
-      src && alt && (
-        <Image
-          src={src}
-          alt={alt}
-          width={width || 1200}
-          height={height || 800}
-          style={`width: ${width || 1200}px; height: ${height || 800}px; object-fit: contain;`}
-          class="object-center"
-          draggable={"false"}
-          format={"avif"}
-          loading={"eager"}
-        />
-      )
+  <!-- Block to display the feature image slider with text content -->
+  {imageList.length > 0 && features && features.length > 0 && (
+    <div class="mb-6 md:mb-8">
+      <div class="relative w-full max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <!-- Circular Slider container (left) -->
+          <div class="lg:col-span-1 flex justify-center lg:justify-start order-2 lg:order-1">
+            <div class="relative w-full max-w-lg">
+              <div class="circular-slider-container relative mx-auto" style={`width: ${Math.min(width || 600, 600)}px; height: ${Math.min(height || 600, 600)}px; padding: 2rem;`}>
+                <!-- Circular track for images -->
+                <div class="circular-track relative w-full h-full" style="overflow: visible;">
+                  {imageList.map((img, index) => {
+                    if (!img || !img.src) return null;
+                    // First image at center, others around in circle
+                    let x = 50, y = 50;
+                    let sizeClass = 'w-56 h-56 border-transparent shadow-2xl';
+                    let focusClass = 'focused';
+                    
+                    if (index !== 0) {
+                      const angle = (360 / (imageList.length - 1)) * (index - 1);
+                      const radius = 40; // Percentage of container
+                      x = 50 + radius * Math.cos((angle - 90) * Math.PI / 180);
+                      y = 50 + radius * Math.sin((angle - 90) * Math.PI / 180);
+                      sizeClass = 'w-32 h-32 border-transparent opacity-60';
+                      focusClass = 'unfocused';
+                    }
+                    
+                    return (
+                      <div 
+                        class={`circular-image-item absolute transition-all duration-500 ${focusClass}`}
+                        style={`left: ${x}%; top: ${y}%; transform: translate(-50%, -50%); z-index: ${index === 0 ? 10 : 5};`}
+                        data-index={index}
+                      >
+                        <div class={`circular-image-wrapper rounded-full overflow-hidden border-4 transition-all duration-500 ${sizeClass}`}>
+                          <Image
+                            src={img.src}
+                            alt={img.alt || `Image ${index + 1}`}
+                            width={width || 300}
+                            height={height || 300}
+                            class="w-full h-full object-contain"
+                            draggable={"false"}
+                            loading={index === 0 ? "eager" : "lazy"}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <!-- Dots indicator -->
+                {imageList.length > 1 && (
+                  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    {imageList.map((_, index) => (
+                      <button
+                        class={`circular-slider-dot w-2 h-2 rounded-full transition-all ${
+                          index === 0 ? 'bg-orange-400 w-8' : 'bg-neutral-400/50 hover:bg-neutral-400/75'
+                        }`}
+                        data-slide={index}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <!-- Text content (right) -->
+          <div class="lg:col-span-1 order-1 lg:order-2">
+            <div class="text-center lg:text-left">
+              <h2 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 md:text-3xl mb-4">
+                {title}
+              </h2>
+              {subTitle && (
+                <p class="text-neutral-600 dark:text-neutral-400 mb-8">
+                  {subTitle}
+                </p>
+              )}
+              
+              <!-- Feature text that changes based on focused image -->
+              <div class="feature-text-container relative min-h-[200px]">
+                {features.map((feature, index) => (
+                  <div 
+                    class={`feature-text-item absolute inset-0 transition-all duration-500 ${index === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}
+                    data-feature-index={index}
+                  >
+                    <div class="flex items-start gap-4 mb-6">
+                      <div class="w-8 h-8 text-orange-400 flex-shrink-0 mt-1">
+                        <Icon name={feature.svg} />
+                      </div>
+                      <div>
+                        <h3 class="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
+                          {feature.heading}
+                        </h3>
+                        <p class="text-neutral-600 dark:text-neutral-400">
+                          {feature.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+
+  <style>
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
-  </div>
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInFromRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideOutToLeft {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+    }
+
+    .feature-text-item {
+      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    }
+
+    .feature-text-item.entering {
+      animation: slideInFromRight 0.8s ease-out forwards;
+    }
+
+    .feature-text-item.exiting {
+      animation: slideOutToLeft 0.8s ease-out forwards;
+    }
+
+    @keyframes expandBar {
+      from {
+        width: 0;
+        opacity: 0;
+      }
+      to {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+
+    @keyframes spiral {
+      0% {
+        transform: rotate(0deg) translateX(0px) rotate(0deg);
+        opacity: 0.3;
+      }
+      25% {
+        transform: rotate(90deg) translateX(40px) rotate(-90deg);
+        opacity: 0.6;
+      }
+      50% {
+        transform: rotate(180deg) translateX(70px) rotate(-180deg);
+        opacity: 0.8;
+      }
+      75% {
+        transform: rotate(270deg) translateX(40px) rotate(-270deg);
+        opacity: 0.6;
+      }
+      100% {
+        transform: rotate(360deg) translateX(0px) rotate(-360deg);
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes spiralReverse {
+      0% {
+        transform: rotate(0deg) translateX(0px) rotate(0deg);
+        opacity: 0.3;
+      }
+      25% {
+        transform: rotate(-90deg) translateX(40px) rotate(90deg);
+        opacity: 0.6;
+      }
+      50% {
+        transform: rotate(-180deg) translateX(70px) rotate(180deg);
+        opacity: 0.8;
+      }
+      75% {
+        transform: rotate(-270deg) translateX(40px) rotate(270deg);
+        opacity: 0.6;
+      }
+      100% {
+        transform: rotate(-360deg) translateX(0px) rotate(360deg);
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes spiralBar {
+      0% {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+        opacity: 0.4;
+      }
+      12.5% {
+        transform: rotate(45deg) translateX(30px) translateY(-20px) rotate(-45deg);
+        opacity: 0.6;
+      }
+      25% {
+        transform: rotate(90deg) translateX(50px) translateY(-30px) rotate(-90deg);
+        opacity: 0.7;
+      }
+      37.5% {
+        transform: rotate(135deg) translateX(60px) translateY(-20px) rotate(-135deg);
+        opacity: 0.8;
+      }
+      50% {
+        transform: rotate(180deg) translateX(70px) translateY(0px) rotate(-180deg);
+        opacity: 0.9;
+      }
+      62.5% {
+        transform: rotate(225deg) translateX(60px) translateY(20px) rotate(-225deg);
+        opacity: 0.8;
+      }
+      75% {
+        transform: rotate(270deg) translateX(50px) translateY(30px) rotate(-270deg);
+        opacity: 0.7;
+      }
+      87.5% {
+        transform: rotate(315deg) translateX(30px) translateY(20px) rotate(-315deg);
+        opacity: 0.6;
+      }
+      100% {
+        transform: rotate(360deg) translateX(0px) translateY(0px) rotate(-360deg);
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes spiralBarReverse {
+      0% {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+        opacity: 0.4;
+      }
+      12.5% {
+        transform: rotate(-45deg) translateX(-30px) translateY(-20px) rotate(45deg);
+        opacity: 0.6;
+      }
+      25% {
+        transform: rotate(-90deg) translateX(-50px) translateY(-30px) rotate(90deg);
+        opacity: 0.7;
+      }
+      37.5% {
+        transform: rotate(-135deg) translateX(-60px) translateY(-20px) rotate(135deg);
+        opacity: 0.8;
+      }
+      50% {
+        transform: rotate(-180deg) translateX(-70px) translateY(0px) rotate(180deg);
+        opacity: 0.9;
+      }
+      62.5% {
+        transform: rotate(-225deg) translateX(-60px) translateY(20px) rotate(225deg);
+        opacity: 0.8;
+      }
+      75% {
+        transform: rotate(-270deg) translateX(-50px) translateY(30px) rotate(270deg);
+        opacity: 0.7;
+      }
+      87.5% {
+        transform: rotate(-315deg) translateX(-30px) translateY(20px) rotate(315deg);
+        opacity: 0.6;
+      }
+      100% {
+        transform: rotate(-360deg) translateX(0px) translateY(0px) rotate(360deg);
+        opacity: 0.4;
+      }
+    }
+
+    .slide-in-left {
+      animation: slideInLeft 0.8s ease-out forwards;
+    }
+
+    .slide-in-right {
+      animation: slideInRight 0.8s ease-out forwards;
+    }
+
+    .animated-bar {
+      animation: expandBar 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .spiral-circle {
+      animation: spiral 8s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .spiral-circle-reverse {
+      animation: spiralReverse 8s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      right: 50%;
+      transform: translate(50%, -50%);
+    }
+
+    .spiral-dot {
+      animation: spiral 6s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .spiral-dot-reverse {
+      animation: spiralReverse 6s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      right: 50%;
+      transform: translate(50%, -50%);
+    }
+
+    .spiral-bar {
+      animation: spiralBar 10s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .spiral-bar-reverse {
+      animation: spiralBarReverse 10s ease-in-out infinite;
+      opacity: 0;
+      top: 50%;
+      right: 50%;
+      transform: translate(50%, -50%);
+    }
+  </style>
 
   <!-- Displaying the main content consisting of title, subtitle, and several `IconBlock` components -->
-  <div class="mt-5 grid gap-8 lg:mt-16 lg:grid-cols-3 lg:gap-12">
-    <!-- Block for title and subtitle -->
+  <!-- <div class="mt-5 grid gap-8 lg:mt-16 lg:grid-cols-3 lg:gap-12">
     <div class="lg:col-span-1">
-      <!-- Rendering title -->
       <h2
         class="text-balance text-2xl font-bold text-neutral-800 dark:text-neutral-200 md:text-3xl"
       >
         {title}
       </h2>
-      <!-- Rendering subtitle -->
       {
         subTitle && (
           <p class="mt-2 text-pretty text-neutral-600 dark:text-neutral-400 md:mt-4">
@@ -64,10 +412,8 @@ const { title, subTitle, src, alt, features, width, height } = Astro.props;
       }
     </div>
 
-    <!-- Block to display the IconBlock components -->
     <div class="lg:col-span-2">
       <div class="grid gap-8 sm:grid-cols-2 md:gap-12">
-        <!-- Injecting IconBlock components with different properties -->
         { features &&
           features.map((feature) => (
             <IconBlock heading={feature.heading} content={feature.content}>
@@ -77,5 +423,159 @@ const { title, subTitle, src, alt, features, width, height } = Astro.props;
         }
       </div>
     </div>
-  </div>
+  </div> -->
 </section>
+
+{imageList.length > 0 && (
+  <script>
+    (function() {
+          function initCircularSlider() {
+        const containers = document.querySelectorAll('.circular-slider-container');
+        
+        containers.forEach((container) => {
+          const imageItems = container.querySelectorAll('.circular-image-item');
+          const dots = container.querySelectorAll('.circular-slider-dot');
+          const featureTexts = document.querySelectorAll('.feature-text-item');
+          
+          if (imageItems.length === 0) return;
+          
+          // Skip if already initialized
+          if ((container as any).sliderInitialized) return;
+          (container as any).sliderInitialized = true;
+          
+          let currentIndex = 0;
+          const totalImages = imageItems.length;
+          let autoScrollInterval: number | null = null;
+          
+          function updateCircularSlider() {
+            if (totalImages === 0) return;
+            
+            const radius = 40; // Percentage of container
+            
+            imageItems.forEach((item: Element, index: number) => {
+              const imageEl = item as HTMLElement;
+              const wrapper = imageEl.querySelector('.circular-image-wrapper') as HTMLElement;
+              
+              // Calculate relative position (0 = focused/center, others rotate around)
+              let relativeIndex = (index - currentIndex + totalImages) % totalImages;
+              
+              // Calculate angle for circular position
+              const angle = (360 / totalImages) * relativeIndex;
+              const x = 50 + radius * Math.cos((angle - 90) * Math.PI / 180);
+              const y = 50 + radius * Math.sin((angle - 90) * Math.PI / 180);
+              
+              // Update position
+              imageEl.style.left = `${x}%`;
+              imageEl.style.top = `${y}%`;
+              
+              // Update focus state
+              if (relativeIndex === 0) {
+                // Focused image - center, large, highlighted
+                imageEl.classList.remove('unfocused');
+                imageEl.classList.add('focused');
+                if (wrapper) {
+                  wrapper.className = 'circular-image-wrapper rounded-full overflow-hidden border-4 transition-all duration-500 w-56 h-56 border-transparent shadow-2xl';
+                }
+              } else {
+                // Unfocused images - smaller, dimmed
+                imageEl.classList.remove('focused');
+                imageEl.classList.add('unfocused');
+                if (wrapper) {
+                  wrapper.className = 'circular-image-wrapper rounded-full overflow-hidden border-4 transition-all duration-500 w-32 h-32 border-transparent opacity-60';
+                }
+              }
+            });
+            
+            // Update feature text based on focused image with animations
+            featureTexts.forEach((textEl: Element, index: number) => {
+              const textElement = textEl as HTMLElement;
+              if (index === currentIndex) {
+                // Remove exit animation and add enter animation
+                textElement.classList.remove('exiting', 'opacity-0', 'translate-x-8', 'pointer-events-none');
+                textElement.classList.add('entering', 'opacity-100', 'translate-x-0');
+                // Remove entering class after animation completes
+                setTimeout(() => {
+                  textElement.classList.remove('entering');
+                }, 800);
+              } else {
+                // Add exit animation if it was visible
+                if (textElement.classList.contains('opacity-100')) {
+                  textElement.classList.add('exiting');
+                  setTimeout(() => {
+                    textElement.classList.remove('exiting', 'opacity-100', 'translate-x-0');
+                    textElement.classList.add('opacity-0', 'translate-x-8', 'pointer-events-none');
+                  }, 800);
+                } else {
+                  textElement.classList.remove('entering', 'opacity-100', 'translate-x-0');
+                  textElement.classList.add('opacity-0', 'translate-x-8', 'pointer-events-none');
+                }
+              }
+            });
+            
+            // Update dots
+            dots.forEach((dot: Element, index: number) => {
+              if (index === currentIndex) {
+                dot.classList.remove('bg-neutral-400/50', 'bg-neutral-400/75');
+                dot.classList.add('bg-orange-400', 'w-8');
+              } else {
+                dot.classList.remove('bg-orange-400', 'w-8');
+                dot.classList.add('bg-neutral-400/50');
+              }
+            });
+          }
+          
+          function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateCircularSlider();
+          }
+          
+          function goToSlide(index: number) {
+            currentIndex = index;
+            updateCircularSlider();
+          }
+          
+          // Auto-scroll functionality
+          function startAutoScroll() {
+            if (totalImages <= 1) return;
+            autoScrollInterval = window.setInterval(() => {
+              nextSlide();
+            }, 3000); // Change slide every 3 seconds
+          }
+          
+          function stopAutoScroll() {
+            if (autoScrollInterval) {
+              clearInterval(autoScrollInterval);
+              autoScrollInterval = null;
+            }
+          }
+          
+          // Click on dots to navigate
+          dots.forEach((dot: Element, index: number) => {
+            dot.addEventListener('click', () => {
+              goToSlide(index);
+              // Restart auto-scroll after manual navigation
+              stopAutoScroll();
+              startAutoScroll();
+            });
+          });
+          
+          // Pause auto-scroll on hover
+          container.addEventListener('mouseenter', stopAutoScroll);
+          container.addEventListener('mouseleave', startAutoScroll);
+          
+          // Initialize slider and start auto-scroll
+          updateCircularSlider();
+          if (totalImages > 1) {
+            startAutoScroll();
+          }
+        });
+      }
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCircularSlider);
+      } else {
+        initCircularSlider();
+      }
+    })();
+  </script>
+)}

@@ -5,7 +5,7 @@ author: "Équipe MAFA"
 authorImage: "@/images/blog/anna.avif"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-09-20
-cardImage: "@/images/blog/post-3.avif"
+cardImage: "@/images/new/transform.png"
 cardImageAlt: "Unité de transformation agroalimentaire"
 readTime: 6
 tags: ["agroalimentaire", "transformation", "produits locaux", "développement durable"]

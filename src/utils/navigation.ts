@@ -7,17 +7,12 @@ const navBarLinks = [
 ];
 // An array of links for footer
 const footerLinks = [
-  {
-    section: "Ecosystem",
-    links: [
-      { name: "Documentation", url: "/welcome-to-docs/" },
-      { name: "Construction Services", url: "/services" },
-    ],
-  },
+
   {
     section: "Company",
     links: [
       { name: "About us", url: "/about" },
+      { name: "Services", url: "/services" },
       { name: "Blog", url: "/blog" },
       { name: "Careers", url: "#" },
       { name: "Customers", url: "#" },

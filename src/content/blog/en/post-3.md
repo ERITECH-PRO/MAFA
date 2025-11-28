@@ -5,7 +5,7 @@ author: "MAFA Team"
 authorImage: "@/images/blog/anna.avif"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-09-20
-cardImage: "@/images/blog/post-3.avif"
+cardImage: "@/images/new/transform.png"
 cardImageAlt: "Agro-processing unit in operation"
 readTime: 6
 tags: ["agro-processing", "transformation", "local products", "sustainability"]

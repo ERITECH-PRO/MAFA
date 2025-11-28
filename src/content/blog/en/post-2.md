@@ -5,7 +5,7 @@ author: "MAFA Team"
 authorImage: "@/images/blog/brad.avif"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-10-15
-cardImage: "@/images/blog/post-2.avif"
+cardImage: "@/images/new/pratique.png"
 cardImageAlt: "Culinary training in session"
 readTime: 4
 tags: ["training", "recruitment", "placement", "culinary"]

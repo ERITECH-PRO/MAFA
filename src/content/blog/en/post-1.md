@@ -5,7 +5,7 @@ author: "MAFA Team"
 authorImage: "@/images/blog/jacob.avif"
 authorImageAlt: "MAFA Team"
 pubDate: 2025-11-01
-cardImage: "@/images/blog/post-1.avif"
+cardImage: "@/images/new/recruter.png"
 cardImageAlt: "Collective kitchen on mining site"
 readTime: 5
 tags: ["catering", "mining", "logistics", "hygiene"]

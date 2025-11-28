@@ -5,7 +5,7 @@ author: "Équipe MAFA"
 authorImage: "@/images/blog/brad.avif"
 authorImageAlt: "Équipe MAFA"
 pubDate: 2025-10-15
-cardImage: "@/images/blog/post-2.avif"
+cardImage: "@/images/new/recruter.png"
 cardImageAlt: "Formation culinaire en cuisine école"
 readTime: 4
 tags: ["formation", "recrutement", "placement", "cuisine"]
