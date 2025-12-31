@@ -1,0 +1,85 @@
+name: Deploy-MAFA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🚀 Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/PROJET/MAFA
+
+            echo "🔄 Pulling latest code..."
+            git fetch --prune --quiet
+            git reset --hard origin/main
+            git clean -fdx
+
+            echo "⚙️ Building and restarting Docker containers..."
+            docker compose build --no-cache --pull
+            docker compose up -d --force-recreate
+
+            echo "✅ Deployed commit $(git rev-parse --short HEAD)"
+
+      - name: ✅ Telegram success
+        if: success()
+        uses: appleboy/telegram-action@v0.1.0
+        with:
+          to:       ${{ secrets.TG_CHAT_ID }}
+          token:    ${{ secrets.TG_TOKEN }}
+          format:   html
+          message: |
+            <b>🟢 Déploiement MAFA réussi</b>
+            <b>SHA :</b> <code>${{ github.sha }}</code>
+            <b>Auteur :</b> <code>${{ github.actor }}</code>
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir logs ↗︎</a>
+
+      - name: ✅ Telegram success (2)
+        if: success()
+        uses: appleboy/telegram-action@v0.1.0
+        with:
+          to:       ${{ secrets.TG_CHAT_ID_2 }}
+          token:    ${{ secrets.TG_TOKEN }}
+          format:   html
+          message: |
+            <b>🟢 Déploiement MAFA réussi</b>
+            <b>SHA :</b> <code>${{ github.sha }}</code>
+            <b>Auteur :</b> <code>${{ github.actor }}</code>
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Voir logs ↗︎</a>
+
+      - name: 🔴 Telegram failure
+        if: failure()
+        uses: appleboy/telegram-action@v0.1.0
+        with:
+          to:       ${{ secrets.TG_CHAT_ID }}
+          token:    ${{ secrets.TG_TOKEN }}
+          format:   html
+          message: |
+            <b>🔴 Échec du déploiement MAFA</b>
+            <b>SHA :</b> <code>${{ github.sha }}</code>
+            <b>Auteur :</b> <code>${{ github.actor }}</code>
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Logs ↗︎</a>
+
+      - name: 🔴 Telegram failure (2)
+        if: failure()
+        uses: appleboy/telegram-action@v0.1.0
+        with:
+          to:       ${{ secrets.TG_CHAT_ID_2 }}
+          token:    ${{ secrets.TG_TOKEN }}
+          format:   html
+          message: |
+            <b>🔴 Échec du déploiement MAFA</b>
+            <b>SHA :</b> <code>${{ github.sha }}</code>
+            <b>Auteur :</b> <code>${{ github.actor }}</code>
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Logs ↗︎</a>
