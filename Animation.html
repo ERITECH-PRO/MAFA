@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFA - Animations d'Arrière-plan</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0a;
+            overflow-x: hidden;
+        }
+
+        .page-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(225, 123, 32, 0.3);
+        }
+
+        .page-selector select {
+            background: rgba(225, 123, 32, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .page-selector label {
+            color: white;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        #animationCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .page-content {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(225, 123, 32, 0.5);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .mafa-logo {
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-selector">
+        <label for="pageSelect">Choisir une page :</label>
+        <select id="pageSelect">
+            <option value="accueil">🏠 Accueil</option>
+            <option value="apropos">ℹ️ À propos</option>
+            <option value="services">🛠️ Services</option>
+            <option value="galerie">🖼️ Galerie</option>
+            <option value="blog">📰 Blog</option>
+            <option value="contact">📞 Contact</option>
+        </select>
+    </div>
+
+    <canvas id="animationCanvas"></canvas>
+
+    <div class="page-content" id="pageContent">
+        <div class="mafa-logo">
+            <svg width="400" height="140" viewBox="0 0 400 140">
+                <circle cx="50" cy="70" r="25" fill="none" stroke="#E17B20" stroke-width="3"/>
+                <path d="M 35 70 Q 50 85 65 70" fill="none" stroke="#E17B20" stroke-width="3"/>
+                <line x1="35" y1="60" x2="35" y2="50" stroke="#5C2E00" stroke-width="2"/>
+                <line x1="65" y1="60" x2="65" y2="50" stroke="#5C2E00" stroke-width="2"/>
+                <text x="100" y="80" font-family="Montserrat" font-weight="700" font-size="52" fill="#5C2E00">MAFA</text>
+                <text x="100" y="105" font-family="Montserrat" font-weight="500" font-size="16" fill="#E17B20">Marmite For Africa</text>
+                <text x="100" y="125" font-family="Montserrat" font-weight="400" font-size="11" fill="#999">MULTISERVICES PROFESSIONNELS EN AFRIQUE</text>
+            </svg>
+        </div>
+        
+        <h1 class="page-title" id="pageTitle">Multiservices Professionnels en Afrique</h1>
+        <p class="page-subtitle" id="pageSubtitle">
+            Excellence dans la restauration, le nettoyage, la logistique et la formation • Au service de l'Afrique
+        </p>
+    </div>
+
+    <script>
+        class MafaAnimations {
+            constructor() {
+                this.canvas = document.getElementById('animationCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.currentPage = 'accueil';
+                this.nodes = [];
+                this.particles = [];
+                this.connections = [];
+                this.animationId = null;
+                
+                this.colors = {
+                    brown: '#5C2E00',
+                    copper: '#E17B20',
+                    gold: '#F8B500',
+                    black: '#000000',
+                    beige: '#FDF1DF',
+                    beigeLight: '#FFF8F0',
+                    warmOrange: '#D97706',
+                    earthBrown: '#78350F'
+                };
+                
+                this.pageConfigs = {
+                    accueil: {
+                        nodeCount: 18,
+                        theme: 'welcoming',
+                        primaryColor: this.colors.copper,
+                        secondaryColor: this.colors.gold,
+                        particles: true,
+                        animation: 'organic',
+                        shapes: ['circle', 'pot', 'star'],
+                        bgEffect: 'warmth'
+                    },
+                    apropos: {
+                        nodeCount: 14,
+                        theme: 'african',
+                        primaryColor: this.colors.brown,
+                        secondaryColor: this.colors.copper,
+                        particles: true,
+                        animation: 'cultural',
+                        shapes: ['circle', 'triangle', 'diamond'],
+                        bgEffect: 'african-pattern'
+                    },
+                    services: {
+                        nodeCount: 20,
+                        theme: 'professional',
+                        primaryColor: this.colors.copper,
+                        secondaryColor: this.colors.earthBrown,
+                        particles: true,
+                        animation: 'efficient',
+                        shapes: ['hexagon', 'square', 'circle', 'diamond'],
+                        bgEffect: 'service-grid'
+                    },
+                    galerie: {
+                        nodeCount: 22,
+                        theme: 'showcase',
+                        primaryColor: this.colors.gold,
+                        secondaryColor: this.colors.copper,
+                        particles: true,
+                        animation: 'gallery',
+                        shapes: ['star', 'circle', 'square'],
+                        bgEffect: 'mosaic'
+                    },
+                    blog: {
+                        nodeCount: 12,
+                        theme: 'stories',
+                        primaryColor: this.colors.warmOrange,
+                        secondaryColor: this.colors.brown,
+                        particles: true,
+                        animation: 'flowing',
+                        shapes: ['circle', 'wave'],
+                        bgEffect: 'storytelling'
+                    },
+                    contact: {
+                        nodeCount: 10,
+                        theme: 'connection',
+                        primaryColor: this.colors.copper,
+                        secondaryColor: this.colors.gold,
+                        particles: true,
+                        animation: 'pulsing',
+                        shapes: ['circle', 'heart'],
+                        bgEffect: 'radial-warm'
+                    }
+                };
+                
+                this.init();
+                this.setupEventListeners();
+            }
+            
+            init() {
+                this.resize();
+                this.createNodes();
+                this.createInitialConnections();
+                this.animate();
+            }
+            
+            setupEventListeners() {
+                window.addEventListener('resize', () => this.resize());
+                document.getElementById('pageSelect').addEventListener('change', (e) => {
+                    this.switchPage(e.target.value);
+                });
+            }
+            
+            switchPage(pageName) {
+                this.currentPage = pageName;
+                this.updatePageContent(pageName);
+                this.recreateAnimation();
+            }
+            
+            updatePageContent(pageName) {
+                const content = {
+                    accueil: {
+                        title: 'Multiservices Professionnels en Afrique',
+                        subtitle: 'Excellence dans la restauration, le nettoyage, la logistique et la formation • Au service de l\'Afrique'
+                    },
+                    apropos: {
+                        title: 'À Propos de MAFA',
+                        subtitle: 'Une entreprise panafricaine engagée dans le développement de services professionnels de qualité'
+                    },
+                    services: {
+                        title: 'Nos Services Multiples',
+                        subtitle: 'Restauration & Catering • Nettoyage • Logistique • Formation • Transformation Agroalimentaire'
+                    },
+                    galerie: {
+                        title: 'Nos Réalisations',
+                        subtitle: 'Découvrez nos projets et interventions à travers l\'Afrique'
+                    },
+                    blog: {
+                        title: 'Actualités & Insights',
+                        subtitle: 'Restez informés de nos projets, innovations et actualités du secteur'
+                    },
+                    contact: {
+                        title: 'Contactez MAFA',
+                        subtitle: 'Discutons de vos besoins en services professionnels • Présents à travers l\'Afrique'
+                    }
+                };
+                
+                document.getElementById('pageTitle').textContent = content[pageName].title;
+                document.getElementById('pageSubtitle').textContent = content[pageName].subtitle;
+            }
+            
+            recreateAnimation() {
+                this.nodes = [];
+                this.particles = [];
+                this.connections = [];
+                this.createNodes();
+                this.createInitialConnections();
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+            }
+            
+            createNodes() {
+                const config = this.pageConfigs[this.currentPage];
+                this.nodes = [];
+                
+                for (let i = 0; i < config.nodeCount; i++) {
+                    const node = {
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 1,
+                        vy: (Math.random() - 0.5) * 1,
+                        radius: Math.max(3, Math.random() * 6 + 3),
+                        baseRadius: Math.max(3, Math.random() * 6 + 3),
+                        pulse: Math.random() * Math.PI * 2,
+                        pulseSpeed: Math.random() * 0.02 + 0.01,
+                        glow: 0,
+                        glowTarget: 0,
+                        ripples: [],
+                        shape: config.shapes[Math.floor(Math.random() * config.shapes.length)],
+                        rotation: Math.random() * Math.PI * 2,
+                        rotationSpeed: (Math.random() - 0.5) * 0.02,
+                        color: Math.random() > 0.7 ? config.primaryColor : config.secondaryColor,
+                        alpha: Math.max(0.1, Math.random() * 0.5 + 0.5)
+                    };
+                    
+                    this.nodes.push(node);
+                }
+            }
+            
+            createInitialConnections() {
+                this.connections = [];
+                
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const distance = this.getDistance(this.nodes[i], this.nodes[j]);
+                        const maxDistance = 250;
+                        
+                        if (distance < maxDistance) {
+                            this.connections.push({
+                                nodeA: i,
+                                nodeB: j,
+                                strength: Math.random() * 0.5 + 0.5,
+                                pulse: Math.random() * Math.PI * 2,
+                                pulseSpeed: Math.random() * 0.03 + 0.01
+                            });
+                        }
+                    }
+                }
+            }
+            
+            updateNodes() {
+                const config = this.pageConfigs[this.currentPage];
+                const time = Date.now() * 0.001;
+                
+                this.nodes.forEach((node, index) => {
+                    switch(config.animation) {
+                        case 'organic':
+                            this.updateOrganicMotion(node, time);
+                            break;
+                        case 'cultural':
+                            this.updateCulturalMotion(node, time);
+                            break;
+                        case 'efficient':
+                            this.updateEfficientMotion(node, time);
+                            break;
+                        case 'gallery':
+                            this.updateGalleryMotion(node, time);
+                            break;
+                        case 'flowing':
+                            this.updateFlowingMotion(node, time, index);
+                            break;
+                        case 'pulsing':
+                            this.updatePulsingMotion(node, time);
+                            break;
+                    }
+                    
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    
+                    if (node.x < 50 || node.x > this.width - 50) {
+                        node.vx *= -0.8;
+                        node.x = Math.max(50, Math.min(this.width - 50, node.x));
+                    }
+                    if (node.y < 50 || node.y > this.height - 50) {
+                        node.vy *= -0.8;
+                        node.y = Math.max(50, Math.min(this.height - 50, node.y));
+                    }
+                    
+                    node.vx *= 0.995;
+                    node.vy *= 0.995;
+                    node.pulse += node.pulseSpeed;
+                    node.rotation += node.rotationSpeed;
+                    node.glow += (node.glowTarget - node.glow) * 0.1;
+                    
+                    if (Math.random() < 0.003) {
+                        node.glowTarget = 1;
+                        this.createRipple(node);
+                    } else if (node.glowTarget > 0) {
+                        node.glowTarget *= 0.95;
+                    }
+                    
+                    node.ripples = node.ripples.filter(ripple => {
+                        ripple.radius += ripple.speed;
+                        ripple.alpha *= 0.95;
+                        return ripple.alpha > 0.01 && ripple.radius < 100;
+                    });
+                });
+            }
+            
+            updateOrganicMotion(node, time) {
+                const flowField = Math.sin(node.x * 0.008 + time * 0.8) * Math.cos(node.y * 0.008 + time * 0.6);
+                node.vx += flowField * 0.015;
+                node.vy += Math.sin(time * 0.7 + node.pulse) * 0.012;
+                const breathe = Math.sin(time * 0.4 + node.pulse) * 0.3;
+                node.radius = Math.max(1, node.baseRadius + breathe * 1.5);
+            }
+            
+            updateCulturalMotion(node, time) {
+                const tribal = Math.sin(time * 0.5 + node.pulse) * 0.5;
+                node.radius = Math.max(1, node.baseRadius + tribal * 2);
+                node.alpha = Math.max(0.1, 0.6 + tribal * 0.4);
+                if (node.shape === 'triangle' || node.shape === 'diamond') {
+                    node.rotationSpeed = 0.008;
+                }
+            }
+            
+            updateEfficientMotion(node, time) {
+                if (node.shape === 'hexagon' || node.shape === 'square') {
+                    node.rotationSpeed = 0.012;
+                    node.vx += Math.sin(time * 1.5 + node.pulse) * 0.006;
+                }
+                const pulse = Math.sin(time * 2 + node.pulse) * 0.2;
+                node.alpha = Math.max(0.1, 0.7 + pulse);
+            }
+            
+            updateGalleryMotion(node, time) {
+                const spiral = time * 0.15 + node.pulse;
+                node.vx += Math.cos(spiral) * 0.012;
+                node.vy += Math.sin(spiral) * 0.012;
+                const hue = 30 + Math.sin(time * 0.5 + node.pulse) * 20;
+                // Stocker en format qui permet l'ajout d'alpha
+                const h = Math.round(hue);
+                node.color = `hsl(${h}, 75%, 45%)`;
+                node.colorWithAlpha = (alpha) => `hsla(${h}, 75%, 45%, ${alpha})`;
+            }
+            
+            updateFlowingMotion(node, time, index) {
+                const flow = (time + index * 0.5) % (Math.PI * 2);
+                node.alpha = Math.max(0.1, 0.5 + Math.sin(flow) * 0.5);
+                node.vx += Math.cos(flow) * 0.01;
+            }
+            
+            updatePulsingMotion(node, time) {
+                const pulse = Math.sin(time * 3 + node.pulse) * 0.5 + 0.5;
+                node.radius = Math.max(1, node.baseRadius + pulse * 3);
+                node.glow = Math.max(0, pulse);
+            }
+            
+            createRipple(node) {
+                node.ripples.push({
+                    radius: 0,
+                    speed: 2 + Math.random(),
+                    alpha: 0.8,
+                    color: node.color
+                });
+            }
+            
+            updateParticles() {
+                const config = this.pageConfigs[this.currentPage];
+                
+                if (!config.particles) return;
+                
+                if (Math.random() < 0.4) {
+                    const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
+                    if (connection) {
+                        const nodeA = this.nodes[connection.nodeA];
+                        const nodeB = this.nodes[connection.nodeB];
+                        
+                        this.particles.push({
+                            x: nodeA.x,
+                            y: nodeA.y,
+                            targetX: nodeB.x,
+                            targetY: nodeB.y,
+                            progress: 0,
+                            speed: Math.random() * 0.015 + 0.005,
+                            size: Math.random() * 3 + 1,
+                            alpha: 1,
+                            color: config.primaryColor,
+                            trail: []
+                        });
+                    }
+                }
+                
+                this.particles = this.particles.filter(particle => {
+                    particle.progress += particle.speed;
+                    
+                    if (particle.progress >= 1) return false;
+                    
+                    const t = this.easeInOutCubic(particle.progress);
+                    const newX = particle.x + (particle.targetX - particle.x) * t * 0.1;
+                    const newY = particle.y + (particle.targetY - particle.y) * t * 0.1;
+                    
+                    particle.trail.push({x: particle.x, y: particle.y, alpha: particle.alpha});
+                    if (particle.trail.length > 5) particle.trail.shift();
+                    
+                    particle.x = newX;
+                    particle.y = newY;
+                    particle.alpha = 1 - particle.progress;
+                    
+                    return true;
+                });
+            }
+            
+            easeInOutCubic(t) {
+                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+            
+            drawBackground() {
+                const config = this.pageConfigs[this.currentPage];
+                
+                switch(config.bgEffect) {
+                    case 'warmth':
+                        this.drawWarmthBackground();
+                        break;
+                    case 'african-pattern':
+                        this.drawAfricanPatternBackground();
+                        break;
+                    case 'service-grid':
+                        this.drawServiceGridBackground();
+                        break;
+                    case 'mosaic':
+                        this.drawMosaicBackground();
+                        break;
+                    case 'storytelling':
+                        this.drawStorytellingBackground();
+                        break;
+                    case 'radial-warm':
+                        this.drawRadialWarmBackground();
+                        break;
+                    default:
+                        this.drawWarmthBackground();
+                }
+            }
+            
+            drawWarmthBackground() {
+                const gradient = this.ctx.createRadialGradient(
+                    this.width / 2, this.height / 2, 0,
+                    this.width / 2, this.height / 2, Math.max(this.width, this.height) / 2
+                );
+                gradient.addColorStop(0, 'rgba(92, 46, 0, 0.15)');
+                gradient.addColorStop(0.4, 'rgba(10, 10, 10, 0.95)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                const time = Date.now() * 0.0005;
+                for (let i = 0; i < 3; i++) {
+                    const x = (Math.sin(time + i * 2) * 0.3 + 0.5) * this.width;
+                    const y = (Math.cos(time * 0.7 + i * 2) * 0.3 + 0.5) * this.height;
+                    const radius = 150 + Math.sin(time + i) * 50;
+                    
+                    const glow = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+                    glow.addColorStop(0, `rgba(225, 123, 32, ${0.08 + Math.sin(time + i) * 0.04})`);
+                    glow.addColorStop(1, 'rgba(225, 123, 32, 0)');
+                    
+                    this.ctx.fillStyle = glow;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+            }
+            
+            drawAfricanPatternBackground() {
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                const time = Date.now() * 0.001;
+                this.ctx.strokeStyle = 'rgba(92, 46, 0, 0.15)';
+                this.ctx.lineWidth = 2;
+                
+                const spacing = 80;
+                for (let x = 0; x < this.width; x += spacing) {
+                    for (let y = 0; y < this.height; y += spacing) {
+                        const offset = Math.sin(time + x * 0.01 + y * 0.01) * 10;
+                        this.ctx.save();
+                        this.ctx.translate(x, y);
+                        this.ctx.rotate(time * 0.1);
+                        
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(0, -15 + offset);
+                        this.ctx.lineTo(-10, 15);
+                        this.ctx.lineTo(10, 15);
+                        this.ctx.closePath();
+                        this.ctx.stroke();
+                        
+                        this.ctx.restore();
+                    }
+                }
+            }
+            
+            drawServiceGridBackground() {
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                this.ctx.strokeStyle = 'rgba(225, 123, 32, 0.08)';
+                this.ctx.lineWidth = 1;
+                
+                const gridSize = 60;
+                for (let x = 0; x < this.width; x += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.height);
+                    this.ctx.stroke();
+                }
+                for (let y = 0; y < this.height; y += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.width, y);
+                    this.ctx.stroke();
+                }
+                
+                const time = Date.now() * 0.001;
+                for (let x = 0; x < this.width; x += gridSize) {
+                    for (let y = 0; y < this.height; y += gridSize) {
+                        const pulse = Math.sin(time + x * 0.01 + y * 0.01) * 0.5 + 0.5;
+                        this.ctx.fillStyle = `rgba(225, 123, 32, ${pulse * 0.3})`;
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                }
+            }
+            
+            drawMosaicBackground() {
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                const time = Date.now() * 0.001;
+                const size = 40;
+                
+                for (let x = 0; x < this.width; x += size * 2) {
+                    for (let y = 0; y < this.height; y += size * 2) {
+                        const hue = 30 + Math.sin(time + x * 0.01 + y * 0.01) * 20;
+                        const alpha = 0.05 + Math.sin(time * 0.5 + x * 0.01) * 0.03;
+                        
+                        this.ctx.fillStyle = `hsla(${hue}, 70%, 45%, ${alpha})`;
+                        this.ctx.fillRect(x, y, size, size);
+                    }
+                }
+            }
+            
+            drawStorytellingBackground() {
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                const time = Date.now() * 0.001;
+                this.ctx.strokeStyle = 'rgba(217, 119, 6, 0.12)';
+                this.ctx.lineWidth = 3;
+                
+                for (let i = 0; i < 6; i++) {
+                    const offset = time + i * 0.5;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, this.height / 2);
+                    
+                    for (let x = 0; x <= this.width; x += 20) {
+                        const y = this.height / 2 + Math.sin((x + offset * 100) * 0.01) * (30 + i * 10);
+                        this.ctx.lineTo(x, y);
+                    }
+                    this.ctx.stroke();
+                }
+            }
+            
+            drawRadialWarmBackground() {
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                const time = Date.now() * 0.001;
+                const centerX = this.width / 2;
+                const centerY = this.height / 2;
+                
+                for (let i = 0; i < 12; i++) {
+                    const radius = 40 + i * 50 + Math.sin(time + i) * 20;
+                    this.ctx.beginPath();
+                    this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                    this.ctx.strokeStyle = `rgba(225, 123, 32, ${0.12 - i * 0.01})`;
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                }
+            }
+            
+            drawNodes() {
+                const config = this.pageConfigs[this.currentPage];
+                
+                this.nodes.forEach(node => {
+                    if (node.radius <= 0) node.radius = 3;
+                    
+                    this.ctx.save();
+                    this.ctx.globalAlpha = Math.max(0, Math.min(1, node.alpha || 1));
+                    
+                    node.ripples.forEach(ripple => {
+                        if (ripple.radius > 0) {
+                            this.ctx.beginPath();
+                            this.ctx.arc(node.x, node.y, ripple.radius, 0, Math.PI * 2);
+                            this.ctx.strokeStyle = ripple.color || config.primaryColor;
+                            this.ctx.lineWidth = 2;
+                            this.ctx.globalAlpha = Math.max(0, ripple.alpha * node.alpha);
+                            this.ctx.stroke();
+                        }
+                    });
+                    
+                    if (node.glow > 0) {
+                        const glowRadius = Math.max(1, node.radius + 15 + node.glow * 25);
+                        const gradient = this.ctx.createRadialGradient(
+                            node.x, node.y, Math.max(1, node.radius),
+                            node.x, node.y, glowRadius
+                        );
+                        gradient.addColorStop(0, `${node.color}60`);
+                        gradient.addColorStop(1, `${node.color}00`);
+                        
+                        this.ctx.beginPath();
+                        this.ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.fill();
+                    }
+                    
+                    this.ctx.translate(node.x, node.y);
+                    this.ctx.rotate(node.rotation);
+                    
+                    const pulseSize = 1 + Math.sin(node.pulse) * 0.2;
+                    const currentRadius = Math.max(1, node.radius * pulseSize);
+                    
+                    this.drawNodeShape(node.shape, currentRadius, node.color);
+                    
+                    this.ctx.restore();
+                });
+            }
+            
+            drawNodeShape(shape, radius, color) {
+                const r = Math.max(1, Math.abs(radius));
+                
+                this.ctx.fillStyle = color;
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = 2;
+                
+                switch(shape) {
+                    case 'circle':
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, r, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        break;
+                        
+                    case 'square':
+                        this.ctx.fillRect(-r, -r, r * 2, r * 2);
+                        break;
+                        
+                    case 'triangle':
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(0, -r);
+                        this.ctx.lineTo(-r * 0.8, r * 0.8);
+                        this.ctx.lineTo(r * 0.8, r * 0.8);
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        break;
+                        
+                    case 'diamond':
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(0, -r);
+                        this.ctx.lineTo(r, 0);
+                        this.ctx.lineTo(0, r);
+                        this.ctx.lineTo(-r, 0);
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        break;
+                        
+                    case 'hexagon':
+                        this.ctx.beginPath();
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i * Math.PI) / 3;
+                            const x = Math.cos(angle) * r;
+                            const y = Math.sin(angle) * r;
+                            if (i === 0) this.ctx.moveTo(x, y);
+                            else this.ctx.lineTo(x, y);
+                        }
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        break;
+                        
+                    case 'star':
+                        this.ctx.beginPath();
+                        for (let i = 0; i < 10; i++) {
+                            const angle = (i * Math.PI) / 5;
+                            const rad = i % 2 === 0 ? r : r * 0.5;
+                            const x = Math.cos(angle) * rad;
+                            const y = Math.sin(angle) * rad;
+                            if (i === 0) this.ctx.moveTo(x, y);
+                            else this.ctx.lineTo(x, y);
+                        }
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        break;
+                        
+                    case 'pot':
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, r * 0.8, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        this.ctx.beginPath();
+                        this.ctx.arc(-r * 0.9, -r * 0.3, r * 0.2, 0, Math.PI * 2);
+                        this.ctx.arc(r * 0.9, -r * 0.3, r * 0.2, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        break;
+                    
+                    case 'heart':
+                        this.ctx.beginPath();
+                        const h = r * 0.3;
+                        this.ctx.moveTo(0, h);
+                        this.ctx.bezierCurveTo(0, 0, -r / 2, -r / 3, -r / 2, h);
+                        this.ctx.bezierCurveTo(-r / 2, (h + r) / 2, 0, (h + r) / 1.3, 0, r);
+                        this.ctx.bezierCurveTo(0, (h + r) / 1.3, r / 2, (h + r) / 2, r / 2, h);
+                        this.ctx.bezierCurveTo(r / 2, -r / 3, 0, 0, 0, h);
+                        this.ctx.fill();
+                        break;
+                    
+                    case 'wave':
+                        this.ctx.beginPath();
+                        for (let i = 0; i <= 20; i++) {
+                            const angle = (i / 20) * Math.PI * 2;
+                            const rad = r + Math.sin(angle * 3) * (r * 0.3);
+                            const x = Math.cos(angle) * rad;
+                            const y = Math.sin(angle) * rad;
+                            if (i === 0) this.ctx.moveTo(x, y);
+                            else this.ctx.lineTo(x, y);
+                        }
+                        this.ctx.closePath();
+                        this.ctx.fill();
+                        break;
+                        
+                    default:
+                        this.ctx.beginPath();
+                        this.ctx.arc(0, 0, r, 0, Math.PI * 2);
+                        this.ctx.fill();
+                }
+            }
+            
+            drawConnections() {
+                const config = this.pageConfigs[this.currentPage];
+                
+                this.connections.forEach(connection => {
+                    const nodeA = this.nodes[connection.nodeA];
+                    const nodeB = this.nodes[connection.nodeB];
+                    
+                    if (!nodeA || !nodeB) return;
+                    
+                    const alpha = Math.min(nodeA.alpha, nodeB.alpha) * connection.strength * 0.7;
+                    if (alpha <= 0) return;
+                    
+                    this.ctx.save();
+                    this.ctx.globalAlpha = alpha;
+                    
+                    const pulseIntensity = (Math.sin(connection.pulse) + 1) / 2;
+                    const lineWidth = 1 + pulseIntensity * 2;
+                    
+                    const gradient = this.ctx.createLinearGradient(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
+                    gradient.addColorStop(0, nodeA.color || config.primaryColor);
+                    gradient.addColorStop(0.5, config.secondaryColor);
+                    gradient.addColorStop(1, nodeB.color || config.primaryColor);
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(nodeA.x, nodeA.y);
+                    this.ctx.lineTo(nodeB.x, nodeB.y);
+                    this.ctx.strokeStyle = gradient;
+                    this.ctx.lineWidth = lineWidth;
+                    this.ctx.stroke();
+                    
+                    this.ctx.restore();
+                });
+            }
+            
+            drawParticles() {
+                this.particles.forEach(particle => {
+                    this.ctx.save();
+                    
+                    particle.trail.forEach((point, index) => {
+                        const trailAlpha = (index / particle.trail.length) * particle.alpha * 0.5;
+                        this.ctx.globalAlpha = trailAlpha;
+                        this.ctx.fillStyle = particle.color;
+                        this.ctx.beginPath();
+                        this.ctx.arc(point.x, point.y, particle.size * 0.5, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    });
+                    
+                    this.ctx.globalAlpha = particle.alpha;
+                    
+                    const glowGradient = this.ctx.createRadialGradient(
+                        particle.x, particle.y, 0,
+                        particle.x, particle.y, particle.size * 4
+                    );
+                    glowGradient.addColorStop(0, particle.color);
+                    glowGradient.addColorStop(0.5, `${particle.color}80`);
+                    glowGradient.addColorStop(1, `${particle.color}00`);
+                    
+                    this.ctx.fillStyle = glowGradient;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size * 4, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    this.ctx.restore();
+                });
+            }
+            
+            updateConnections() {
+                this.connections.forEach(connection => {
+                    connection.pulse += connection.pulseSpeed;
+                    
+                    const nodeA = this.nodes[connection.nodeA];
+                    const nodeB = this.nodes[connection.nodeB];
+                    
+                    if (nodeA && nodeB) {
+                        const distance = this.getDistance(nodeA, nodeB);
+                        const maxDistance = 300;
+                        connection.strength = Math.max(0, 1 - distance / maxDistance);
+                    }
+                });
+                
+                this.connections = this.connections.filter(conn => conn.strength > 0.1);
+            }
+            
+            getDistance(nodeA, nodeB) {
+                const dx = nodeA.x - nodeB.x;
+                const dy = nodeA.y - nodeB.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            animate() {
+                this.drawBackground();
+                this.updateNodes();
+                this.updateConnections();
+                this.updateParticles();
+                
+                this.drawConnections();
+                this.drawParticles();
+                this.drawNodes();
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            destroy() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+        }
+        
+        const mafaAnimations = new MafaAnimations();
+        
+        window.addEventListener('beforeunload', () => {
+            mafaAnimations.destroy();
+        });
+    </script>
+</body>
+</html>

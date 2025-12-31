@@ -7,6 +7,7 @@ import { SITE } from "@data/constants";
 import "@styles/global.css";
 import ThreeDBackground from "@components/background/ThreeDBackground.astro";
 import NetworkBackground from "@components/ui/NetworkBackground.astro";
+import MafaAnimations from "@components/background/MafaAnimations.astro";
 // Setting expected props
 const {
   title = SITE.title,
@@ -58,8 +59,9 @@ interface Props {
   <body
     class="selection:bg-yellow-400 selection:text-neutral-700 flex flex-col min-h-screen bg-neutral-200 dark:bg-neutral-900"
   >
-    <NetworkBackground />
-    <ThreeDBackground />
+    <MafaAnimations />
+    {/* <NetworkBackground /> */}
+    {/* <ThreeDBackground /> */}
     {/*
     Setting up the main structure of the page.
     The Navbar is placed at the top, with a slot for the main content and FooterSection at the bottom.

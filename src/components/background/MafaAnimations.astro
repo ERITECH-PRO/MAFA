@@ -1,0 +1,1118 @@
+---
+// MAFA Animations Background Component
+// Based on Animation.html, adapted for Astro
+---
+
+<div class="mafa-animations-container">
+  <canvas id="mafaAnimationCanvas" class="mafa-animation-canvas"></canvas>
+</div>
+
+<style>
+  .mafa-animations-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #0a0a0a;
+    transition: background 0.3s ease;
+  }
+
+  /* Light mode background */
+  html:not(.dark) .mafa-animations-container {
+    background: #f5f5f5;
+  }
+
+  .mafa-animation-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<script>
+  class MafaAnimations {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.currentPage = this.detectCurrentPage();
+      this.nodes = [];
+      this.particles = [];
+      this.connections = [];
+      this.waves = [];
+      this.animationId = null;
+      this.isDarkMode = this.checkDarkMode();
+      
+      this.colors = {
+        brown: '#5C2E00',
+        copper: '#E17B20',
+        gold: '#F8B500',
+        black: '#000000',
+        beige: '#FDF1DF',
+        beigeLight: '#FFF8F0',
+        warmOrange: '#D97706',
+        earthBrown: '#78350F'
+      };
+      
+      this.pageConfigs = {
+        accueil: {
+          nodeCount: 18,
+          theme: 'welcoming',
+          primaryColor: this.colors.copper,
+          secondaryColor: this.colors.gold,
+          particles: true,
+          animation: 'organic',
+          shapes: ['circle', 'pot', 'star'],
+          bgEffect: 'warmth'
+        },
+        apropos: {
+          nodeCount: 14,
+          theme: 'african',
+          primaryColor: this.colors.brown,
+          secondaryColor: this.colors.copper,
+          particles: true,
+          animation: 'cultural',
+          shapes: ['circle', 'triangle', 'diamond'],
+          bgEffect: 'african-pattern'
+        },
+        services: {
+          nodeCount: 20,
+          theme: 'professional',
+          primaryColor: this.colors.copper,
+          secondaryColor: this.colors.earthBrown,
+          particles: true,
+          animation: 'efficient',
+          shapes: ['hexagon', 'square', 'circle', 'diamond'],
+          bgEffect: 'service-grid'
+        },
+        galerie: {
+          nodeCount: 22,
+          theme: 'showcase',
+          primaryColor: this.colors.gold,
+          secondaryColor: this.colors.copper,
+          particles: true,
+          animation: 'gallery',
+          shapes: ['star', 'circle', 'square'],
+          bgEffect: 'mosaic'
+        },
+        blog: {
+          nodeCount: 12,
+          theme: 'stories',
+          primaryColor: this.colors.warmOrange,
+          secondaryColor: this.colors.brown,
+          particles: true,
+          animation: 'flowing',
+          shapes: ['circle', 'wave'],
+          bgEffect: 'storytelling'
+        },
+        contact: {
+          nodeCount: 10,
+          theme: 'connection',
+          primaryColor: this.colors.copper,
+          secondaryColor: this.colors.gold,
+          particles: true,
+          animation: 'pulsing',
+          shapes: ['circle', 'heart'],
+          bgEffect: 'radial-warm'
+        }
+      };
+      
+      this.init();
+      this.setupEventListeners();
+    }
+    
+    checkDarkMode() {
+      return document.documentElement.classList.contains('dark');
+    }
+    
+    detectCurrentPage() {
+      const path = window.location.pathname;
+      // Handle French routes
+      if (path.startsWith('/fr/')) {
+        const page = path.replace('/fr/', '').split('/')[0] || 'accueil';
+        return page === '' ? 'accueil' : page;
+      }
+      // Handle English routes
+      const page = path.replace('/', '').split('/')[0] || 'accueil';
+      const pageMap = {
+        '': 'accueil',
+        'about': 'apropos',
+        'services': 'services',
+        'gallery': 'galerie',
+        'blog': 'blog',
+        'contact': 'contact'
+      };
+      return pageMap[page] || 'accueil';
+    }
+    
+    init() {
+      this.resize();
+      this.createNodes();
+      this.createInitialConnections();
+      this.initWaves();
+      this.animate();
+    }
+    
+    setupEventListeners() {
+      window.addEventListener('resize', () => this.resize());
+      // Listen for route changes (Astro client-side navigation)
+      window.addEventListener('astro:page-load', () => {
+        this.currentPage = this.detectCurrentPage();
+        this.recreateAnimation();
+      });
+      // Listen for theme changes
+      window.addEventListener('on-hs-appearance-change', () => {
+        this.isDarkMode = this.checkDarkMode();
+      });
+      // Also check for manual class changes
+      const observer = new MutationObserver(() => {
+        const wasDarkMode = this.isDarkMode;
+        this.isDarkMode = this.checkDarkMode();
+        if (wasDarkMode !== this.isDarkMode) {
+          // Theme changed, we can recreate if needed
+        }
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
+    
+    recreateAnimation() {
+      this.nodes = [];
+      this.particles = [];
+      this.connections = [];
+      this.waves = [];
+      this.createNodes();
+      this.createInitialConnections();
+      this.initWaves();
+    }
+    
+    initWaves() {
+      this.waves = [];
+      // Créer quelques ondes initiales
+      for (let i = 0; i < 3; i++) {
+        this.waves.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          radius: 0,
+          maxRadius: 300 + Math.random() * 200,
+          speed: 1 + Math.random() * 0.5,
+          alpha: 0.3 + Math.random() * 0.2,
+          life: 1,
+          color: this.colors.copper
+        });
+      }
+    }
+    
+    resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      this.width = this.canvas.width;
+      this.height = this.canvas.height;
+    }
+    
+    createNodes() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      this.nodes = [];
+      
+      for (let i = 0; i < config.nodeCount; i++) {
+        const node = {
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          vx: (Math.random() - 0.5) * 1,
+          vy: (Math.random() - 0.5) * 1,
+          radius: Math.max(3, Math.random() * 6 + 3),
+          baseRadius: Math.max(3, Math.random() * 6 + 3),
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: Math.random() * 0.02 + 0.01,
+          glow: 0,
+          glowTarget: 0,
+          ripples: [],
+          shape: config.shapes[Math.floor(Math.random() * config.shapes.length)],
+          rotation: Math.random() * Math.PI * 2,
+          rotationSpeed: (Math.random() - 0.5) * 0.02,
+          color: Math.random() > 0.7 ? config.primaryColor : config.secondaryColor,
+          alpha: this.isDarkMode 
+            ? Math.max(0.1, Math.random() * 0.5 + 0.5)
+            : Math.max(0.3, Math.random() * 0.4 + 0.6)
+        };
+        
+        this.nodes.push(node);
+      }
+    }
+    
+    createInitialConnections() {
+      this.connections = [];
+      
+      for (let i = 0; i < this.nodes.length; i++) {
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const distance = this.getDistance(this.nodes[i], this.nodes[j]);
+          const maxDistance = 250;
+          
+          if (distance < maxDistance) {
+            this.connections.push({
+              nodeA: i,
+              nodeB: j,
+              strength: Math.random() * 0.5 + 0.5,
+              pulse: Math.random() * Math.PI * 2,
+              pulseSpeed: Math.random() * 0.03 + 0.01
+            });
+          }
+        }
+      }
+    }
+    
+    updateNodes() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      const time = Date.now() * 0.001;
+      
+      this.nodes.forEach((node, index) => {
+        switch(config.animation) {
+          case 'organic':
+            this.updateOrganicMotion(node, time);
+            break;
+          case 'cultural':
+            this.updateCulturalMotion(node, time);
+            break;
+          case 'efficient':
+            this.updateEfficientMotion(node, time);
+            break;
+          case 'gallery':
+            this.updateGalleryMotion(node, time);
+            break;
+          case 'flowing':
+            this.updateFlowingMotion(node, time, index);
+            break;
+          case 'pulsing':
+            this.updatePulsingMotion(node, time);
+            break;
+        }
+        
+        node.x += node.vx;
+        node.y += node.vy;
+        
+        if (node.x < 50 || node.x > this.width - 50) {
+          node.vx *= -0.8;
+          node.x = Math.max(50, Math.min(this.width - 50, node.x));
+        }
+        if (node.y < 50 || node.y > this.height - 50) {
+          node.vy *= -0.8;
+          node.y = Math.max(50, Math.min(this.height - 50, node.y));
+        }
+        
+        node.vx *= 0.995;
+        node.vy *= 0.995;
+        node.pulse += node.pulseSpeed;
+        node.rotation += node.rotationSpeed;
+        node.glow += (node.glowTarget - node.glow) * 0.1;
+        
+        if (Math.random() < 0.003) {
+          node.glowTarget = 1;
+          this.createRipple(node);
+        } else if (node.glowTarget > 0) {
+          node.glowTarget *= 0.95;
+        }
+        
+        node.ripples = node.ripples.filter(ripple => {
+          ripple.radius += ripple.speed * 1.5;
+          ripple.alpha *= 0.92;
+          return ripple.alpha > 0.01 && ripple.radius < 150;
+        });
+      });
+    }
+    
+    updateOrganicMotion(node, time) {
+      const flowField = Math.sin(node.x * 0.008 + time * 0.8) * Math.cos(node.y * 0.008 + time * 0.6);
+      node.vx += flowField * 0.015;
+      node.vy += Math.sin(time * 0.7 + node.pulse) * 0.012;
+      const breathe = Math.sin(time * 0.4 + node.pulse) * 0.3;
+      node.radius = Math.max(1, node.baseRadius + breathe * 1.5);
+    }
+    
+    updateCulturalMotion(node, time) {
+      const tribal = Math.sin(time * 0.5 + node.pulse) * 0.5;
+      node.radius = Math.max(1, node.baseRadius + tribal * 2);
+      const baseAlpha = this.isDarkMode ? 0.6 : 0.7;
+      node.alpha = Math.max(0.1, baseAlpha + tribal * 0.4);
+      if (node.shape === 'triangle' || node.shape === 'diamond') {
+        node.rotationSpeed = 0.008;
+      }
+    }
+    
+    updateEfficientMotion(node, time) {
+      if (node.shape === 'hexagon' || node.shape === 'square') {
+        node.rotationSpeed = 0.012;
+        node.vx += Math.sin(time * 1.5 + node.pulse) * 0.006;
+      }
+      const pulse = Math.sin(time * 2 + node.pulse) * 0.2;
+      const baseAlpha = this.isDarkMode ? 0.7 : 0.75;
+      node.alpha = Math.max(0.1, baseAlpha + pulse);
+    }
+    
+    updateGalleryMotion(node, time) {
+      const spiral = time * 0.15 + node.pulse;
+      node.vx += Math.cos(spiral) * 0.012;
+      node.vy += Math.sin(spiral) * 0.012;
+      const h = Math.round(30 + Math.sin(time * 0.5 + node.pulse) * 20);
+      node.color = `hsl(${h}, 75%, 45%)`;
+      node.colorWithAlpha = (alpha) => `hsla(${h}, 75%, 45%, ${alpha})`;
+    }
+    
+    updateFlowingMotion(node, time, index) {
+      const flow = (time + index * 0.5) % (Math.PI * 2);
+      node.alpha = Math.max(0.1, 0.5 + Math.sin(flow) * 0.5);
+      node.vx += Math.cos(flow) * 0.01;
+    }
+    
+    updatePulsingMotion(node, time) {
+      const pulse = Math.sin(time * 3 + node.pulse) * 0.5 + 0.5;
+      node.radius = Math.max(1, node.baseRadius + pulse * 3);
+      node.glow = Math.max(0, pulse);
+    }
+    
+    createRipple(node) {
+      node.ripples.push({
+        radius: 0,
+        speed: 2 + Math.random(),
+        alpha: 0.8,
+        color: node.color
+      });
+      
+      // Créer aussi une onde globale plus grande
+      if (Math.random() < 0.3) {
+        this.waves.push({
+          x: node.x,
+          y: node.y,
+          radius: 0,
+          maxRadius: 400 + Math.random() * 300,
+          speed: 0.8 + Math.random() * 0.4,
+          alpha: 0.15 + Math.random() * 0.1,
+          life: 1,
+          color: node.color
+        });
+      }
+    }
+    
+    updateWaves() {
+      this.waves = this.waves.filter(wave => {
+        wave.radius += wave.speed * 2;
+        wave.life = 1 - (wave.radius / wave.maxRadius);
+        wave.alpha = wave.life * 0.3;
+        
+        // Créer de nouvelles ondes aléatoirement
+        if (Math.random() < 0.002) {
+          const node = this.nodes[Math.floor(Math.random() * this.nodes.length)];
+          if (node) {
+            this.waves.push({
+              x: node.x,
+              y: node.y,
+              radius: 0,
+              maxRadius: 350 + Math.random() * 250,
+              speed: 0.7 + Math.random() * 0.5,
+              alpha: 0.2,
+              life: 1,
+              color: node.color
+            });
+          }
+        }
+        
+        return wave.radius < wave.maxRadius && wave.alpha > 0.01;
+      });
+    }
+    
+    drawWaves() {
+      this.waves.forEach(wave => {
+        if (wave.alpha <= 0) return;
+        
+        this.ctx.save();
+        this.ctx.globalAlpha = wave.alpha;
+        
+        // Créer un gradient pour l'onde
+        const gradient = this.ctx.createRadialGradient(
+          wave.x, wave.y, wave.radius * 0.3,
+          wave.x, wave.y, wave.radius
+        );
+        
+        let colorWithAlpha;
+        const waveAlpha = this.isDarkMode ? 0.6 : 0.4;
+        if (wave.color.startsWith('hsl')) {
+          colorWithAlpha = wave.color.replace(/hsl\(([^)]+)\)/, `hsla($1, ${waveAlpha})`);
+        } else {
+          colorWithAlpha = this.hexToRgba(wave.color, waveAlpha);
+        }
+        
+        gradient.addColorStop(0, colorWithAlpha);
+        gradient.addColorStop(0.5, this.hexToRgba(wave.color, waveAlpha * 0.5));
+        gradient.addColorStop(1, this.hexToRgba(wave.color, 0));
+        
+        this.ctx.strokeStyle = gradient;
+        this.ctx.lineWidth = 3 - (wave.radius / wave.maxRadius) * 2;
+        
+        // Dessiner plusieurs cercles concentriques pour l'effet d'onde
+        for (let i = 0; i < 3; i++) {
+          const offset = i * 15;
+          const currentRadius = wave.radius - offset;
+          if (currentRadius > 0) {
+            this.ctx.beginPath();
+            this.ctx.arc(wave.x, wave.y, currentRadius, 0, Math.PI * 2);
+            this.ctx.globalAlpha = wave.alpha * (1 - i * 0.3);
+            this.ctx.stroke();
+          }
+        }
+        
+        this.ctx.restore();
+      });
+    }
+    
+    updateParticles() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      
+      if (!config.particles) return;
+      
+      if (Math.random() < 0.4) {
+        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
+        if (connection) {
+          const nodeA = this.nodes[connection.nodeA];
+          const nodeB = this.nodes[connection.nodeB];
+          
+          this.particles.push({
+            x: nodeA.x,
+            y: nodeA.y,
+            targetX: nodeB.x,
+            targetY: nodeB.y,
+            progress: 0,
+            speed: Math.random() * 0.015 + 0.005,
+            size: Math.random() * 3 + 1,
+            alpha: 1,
+            color: config.primaryColor,
+            trail: []
+          });
+        }
+      }
+      
+      this.particles = this.particles.filter(particle => {
+        particle.progress += particle.speed;
+        
+        if (particle.progress >= 1) return false;
+        
+        const t = this.easeInOutCubic(particle.progress);
+        const newX = particle.x + (particle.targetX - particle.x) * t * 0.1;
+        const newY = particle.y + (particle.targetY - particle.y) * t * 0.1;
+        
+        particle.trail.push({x: particle.x, y: particle.y, alpha: particle.alpha});
+        if (particle.trail.length > 5) particle.trail.shift();
+        
+        particle.x = newX;
+        particle.y = newY;
+        particle.alpha = 1 - particle.progress;
+        
+        return true;
+      });
+    }
+    
+    easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+    
+    drawBackground() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      
+      switch(config.bgEffect) {
+        case 'warmth':
+          this.drawWarmthBackground();
+          break;
+        case 'african-pattern':
+          this.drawAfricanPatternBackground();
+          break;
+        case 'service-grid':
+          this.drawServiceGridBackground();
+          break;
+        case 'mosaic':
+          this.drawMosaicBackground();
+          break;
+        case 'storytelling':
+          this.drawStorytellingBackground();
+          break;
+        case 'radial-warm':
+          this.drawRadialWarmBackground();
+          break;
+        default:
+          this.drawWarmthBackground();
+      }
+    }
+    
+    drawWarmthBackground() {
+      const gradient = this.ctx.createRadialGradient(
+        this.width / 2, this.height / 2, 0,
+        this.width / 2, this.height / 2, Math.max(this.width, this.height) / 2
+      );
+      
+      if (this.isDarkMode) {
+        gradient.addColorStop(0, 'rgba(92, 46, 0, 0.15)');
+        gradient.addColorStop(0.4, 'rgba(10, 10, 10, 0.95)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+      } else {
+        gradient.addColorStop(0, 'rgba(225, 123, 32, 0.08)');
+        gradient.addColorStop(0.4, 'rgba(245, 245, 245, 0.9)');
+        gradient.addColorStop(1, 'rgba(250, 250, 250, 0.95)');
+      }
+      
+      this.ctx.fillStyle = gradient;
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      const time = Date.now() * 0.0005;
+      for (let i = 0; i < 3; i++) {
+        const x = (Math.sin(time + i * 2) * 0.3 + 0.5) * this.width;
+        const y = (Math.cos(time * 0.7 + i * 2) * 0.3 + 0.5) * this.height;
+        const radius = 150 + Math.sin(time + i) * 50;
+        
+        const glow = this.ctx.createRadialGradient(x, y, 0, x, y, radius);
+        const alpha = this.isDarkMode 
+          ? (0.08 + Math.sin(time + i) * 0.04)
+          : (0.05 + Math.sin(time + i) * 0.02);
+        glow.addColorStop(0, `rgba(225, 123, 32, ${alpha})`);
+        glow.addColorStop(1, 'rgba(225, 123, 32, 0)');
+        
+        this.ctx.fillStyle = glow;
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+      
+      // Ajouter des ondes d'arrière-plan subtiles
+      this.drawBackgroundWaves(time);
+    }
+    
+    drawBackgroundWaves(time) {
+      this.ctx.save();
+      this.ctx.globalAlpha = this.isDarkMode ? 0.05 : 0.08;
+      this.ctx.strokeStyle = this.colors.copper;
+      this.ctx.lineWidth = 2;
+      
+      // Ondes horizontales qui ondulent
+      for (let i = 0; i < 5; i++) {
+        const y = (this.height / 6) * (i + 1);
+        const waveOffset = Math.sin(time + i) * 30;
+        
+        this.ctx.beginPath();
+        for (let x = 0; x <= this.width; x += 5) {
+          const waveY = y + Math.sin((x + time * 100) * 0.02 + i) * (20 + waveOffset);
+          if (x === 0) {
+            this.ctx.moveTo(x, waveY);
+          } else {
+            this.ctx.lineTo(x, waveY);
+          }
+        }
+        this.ctx.stroke();
+      }
+      
+      this.ctx.restore();
+    }
+    
+    drawAfricanPatternBackground() {
+      if (this.isDarkMode) {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+      } else {
+        this.ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
+      }
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      const time = Date.now() * 0.001;
+      this.ctx.strokeStyle = this.isDarkMode 
+        ? 'rgba(92, 46, 0, 0.15)' 
+        : 'rgba(92, 46, 0, 0.25)';
+      this.ctx.lineWidth = 2;
+      
+      const spacing = 80;
+      for (let x = 0; x < this.width; x += spacing) {
+        for (let y = 0; y < this.height; y += spacing) {
+          const offset = Math.sin(time + x * 0.01 + y * 0.01) * 10;
+          this.ctx.save();
+          this.ctx.translate(x, y);
+          this.ctx.rotate(time * 0.1);
+          
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, -15 + offset);
+          this.ctx.lineTo(-10, 15);
+          this.ctx.lineTo(10, 15);
+          this.ctx.closePath();
+          this.ctx.stroke();
+          
+          this.ctx.restore();
+        }
+      }
+    }
+    
+    drawServiceGridBackground() {
+      if (this.isDarkMode) {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+      } else {
+        this.ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
+      }
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      this.ctx.strokeStyle = this.isDarkMode 
+        ? 'rgba(225, 123, 32, 0.08)' 
+        : 'rgba(225, 123, 32, 0.15)';
+      this.ctx.lineWidth = 1;
+      
+      const gridSize = 60;
+      for (let x = 0; x < this.width; x += gridSize) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x, 0);
+        this.ctx.lineTo(x, this.height);
+        this.ctx.stroke();
+      }
+      for (let y = 0; y < this.height; y += gridSize) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, y);
+        this.ctx.lineTo(this.width, y);
+        this.ctx.stroke();
+      }
+      
+      const time = Date.now() * 0.001;
+      for (let x = 0; x < this.width; x += gridSize) {
+        for (let y = 0; y < this.height; y += gridSize) {
+          const pulse = Math.sin(time + x * 0.01 + y * 0.01) * 0.5 + 0.5;
+          const alpha = this.isDarkMode ? (pulse * 0.3) : (pulse * 0.2);
+          this.ctx.fillStyle = `rgba(225, 123, 32, ${alpha})`;
+          this.ctx.beginPath();
+          this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+    
+    drawMosaicBackground() {
+      if (this.isDarkMode) {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+      } else {
+        this.ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
+      }
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      const time = Date.now() * 0.001;
+      const size = 40;
+      
+      for (let x = 0; x < this.width; x += size * 2) {
+        for (let y = 0; y < this.height; y += size * 2) {
+          const hue = 30 + Math.sin(time + x * 0.01 + y * 0.01) * 20;
+          const baseAlpha = this.isDarkMode ? 0.05 : 0.03;
+          const alpha = baseAlpha + Math.sin(time * 0.5 + x * 0.01) * 0.02;
+          
+          this.ctx.fillStyle = `hsla(${hue}, 70%, 45%, ${alpha})`;
+          this.ctx.fillRect(x, y, size, size);
+        }
+      }
+      
+      // Ajouter des ondes subtiles en arrière-plan
+      this.ctx.save();
+      this.ctx.globalAlpha = this.isDarkMode ? 0.03 : 0.05;
+      this.ctx.strokeStyle = this.colors.gold;
+      this.ctx.lineWidth = 1.5;
+      
+      for (let i = 0; i < 4; i++) {
+        const centerY = (this.height / 5) * (i + 1);
+        this.ctx.beginPath();
+        for (let x = 0; x <= this.width; x += 3) {
+          const waveY = centerY + Math.sin((x + time * 80) * 0.015 + i) * 25;
+          if (x === 0) {
+            this.ctx.moveTo(x, waveY);
+          } else {
+            this.ctx.lineTo(x, waveY);
+          }
+        }
+        this.ctx.stroke();
+      }
+      
+      this.ctx.restore();
+    }
+    
+    drawStorytellingBackground() {
+      if (this.isDarkMode) {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+      } else {
+        this.ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
+      }
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      const time = Date.now() * 0.001;
+      this.ctx.strokeStyle = this.isDarkMode 
+        ? 'rgba(217, 119, 6, 0.12)' 
+        : 'rgba(217, 119, 6, 0.2)';
+      this.ctx.lineWidth = 3;
+      
+      // Ondes multiples plus prononcées
+      for (let i = 0; i < 8; i++) {
+        const offset = time + i * 0.5;
+        const waveHeight = 30 + i * 8;
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, this.height / 2);
+        
+        for (let x = 0; x <= this.width; x += 15) {
+          const y = this.height / 2 + Math.sin((x + offset * 100) * 0.01) * waveHeight;
+          this.ctx.lineTo(x, y);
+        }
+        const baseAlpha = this.isDarkMode ? 0.12 : 0.15;
+        this.ctx.globalAlpha = baseAlpha - i * 0.01;
+        this.ctx.stroke();
+      }
+      
+      this.ctx.globalAlpha = 1;
+    }
+    
+    drawRadialWarmBackground() {
+      if (this.isDarkMode) {
+        this.ctx.fillStyle = 'rgba(10, 10, 10, 0.95)';
+      } else {
+        this.ctx.fillStyle = 'rgba(245, 245, 245, 0.9)';
+      }
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      const time = Date.now() * 0.001;
+      const centerX = this.width / 2;
+      const centerY = this.height / 2;
+      
+      // Cercles concentriques animés avec effet d'onde
+      for (let i = 0; i < 15; i++) {
+        const baseRadius = 40 + i * 50;
+        const radius = baseRadius + Math.sin(time * 2 + i * 0.5) * 25;
+        const baseAlpha = this.isDarkMode ? 0.15 : 0.12;
+        const alpha = baseAlpha - i * 0.008;
+        
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        this.ctx.strokeStyle = `rgba(225, 123, 32, ${alpha})`;
+        this.ctx.lineWidth = 2 + Math.sin(time + i) * 0.5;
+        this.ctx.stroke();
+        
+        // Ajouter des cercles secondaires pour effet d'onde
+        if (i % 3 === 0) {
+          const waveRadius = radius + Math.sin(time * 3 + i) * 15;
+          this.ctx.beginPath();
+          this.ctx.arc(centerX, centerY, waveRadius, 0, Math.PI * 2);
+          this.ctx.strokeStyle = `rgba(225, 123, 32, ${alpha * 0.5})`;
+          this.ctx.lineWidth = 1;
+          this.ctx.stroke();
+        }
+      }
+    }
+    
+    drawNodes() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      
+      this.nodes.forEach(node => {
+        if (node.radius <= 0) node.radius = 3;
+        
+        this.ctx.save();
+        this.ctx.globalAlpha = Math.max(0, Math.min(1, node.alpha || 1));
+        
+        node.ripples.forEach(ripple => {
+          if (ripple.radius > 0) {
+            // Dessiner plusieurs cercles concentriques pour un effet d'onde plus prononcé
+            for (let i = 0; i < 2; i++) {
+              const offset = i * 8;
+              const currentRadius = ripple.radius - offset;
+              if (currentRadius > 0) {
+                this.ctx.beginPath();
+                this.ctx.arc(node.x, node.y, currentRadius, 0, Math.PI * 2);
+                this.ctx.strokeStyle = ripple.color || config.primaryColor;
+                this.ctx.lineWidth = 2 - i * 0.5;
+                this.ctx.globalAlpha = Math.max(0, ripple.alpha * node.alpha * (1 - i * 0.4));
+                this.ctx.stroke();
+              }
+            }
+          }
+        });
+        
+        if (node.glow > 0) {
+          const glowRadius = Math.max(1, node.radius + 15 + node.glow * 25);
+          const gradient = this.ctx.createRadialGradient(
+            node.x, node.y, Math.max(1, node.radius),
+            node.x, node.y, glowRadius
+          );
+          let colorWithAlpha;
+          const glowAlpha = this.isDarkMode ? 0.38 : 0.25;
+          if (node.color.startsWith('hsl')) {
+            colorWithAlpha = node.color.replace(/hsl\(([^)]+)\)/, `hsla($1, ${glowAlpha})`);
+          } else {
+            colorWithAlpha = this.hexToRgba(node.color, glowAlpha);
+          }
+          gradient.addColorStop(0, colorWithAlpha);
+          gradient.addColorStop(1, this.hexToRgba(node.color, 0));
+          
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
+          this.ctx.fillStyle = gradient;
+          this.ctx.fill();
+        }
+        
+        this.ctx.translate(node.x, node.y);
+        this.ctx.rotate(node.rotation);
+        
+        const pulseSize = 1 + Math.sin(node.pulse) * 0.2;
+        const currentRadius = Math.max(1, node.radius * pulseSize);
+        
+        this.drawNodeShape(node.shape, currentRadius, node.color);
+        
+        this.ctx.restore();
+      });
+    }
+    
+    hexToRgba(color, alpha) {
+      // Handle HSL colors (from gallery animation)
+      if (color.startsWith('hsl')) {
+        return color.replace(/hsl\(([^)]+)\)/, `hsla($1, ${alpha})`);
+      }
+      // Handle hex colors
+      if (color.startsWith('#')) {
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+      // Fallback for other formats
+      return color;
+    }
+    
+    drawNodeShape(shape, radius, color) {
+      const r = Math.max(1, Math.abs(radius));
+      
+      this.ctx.fillStyle = color;
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = 2;
+      
+      switch(shape) {
+        case 'circle':
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, r, 0, Math.PI * 2);
+          this.ctx.fill();
+          break;
+          
+        case 'square':
+          this.ctx.fillRect(-r, -r, r * 2, r * 2);
+          break;
+          
+        case 'triangle':
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, -r);
+          this.ctx.lineTo(-r * 0.8, r * 0.8);
+          this.ctx.lineTo(r * 0.8, r * 0.8);
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+          
+        case 'diamond':
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, -r);
+          this.ctx.lineTo(r, 0);
+          this.ctx.lineTo(0, r);
+          this.ctx.lineTo(-r, 0);
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+          
+        case 'hexagon':
+          this.ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (i * Math.PI) / 3;
+            const x = Math.cos(angle) * r;
+            const y = Math.sin(angle) * r;
+            if (i === 0) this.ctx.moveTo(x, y);
+            else this.ctx.lineTo(x, y);
+          }
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+          
+        case 'star':
+          this.ctx.beginPath();
+          for (let i = 0; i < 10; i++) {
+            const angle = (i * Math.PI) / 5;
+            const rad = i % 2 === 0 ? r : r * 0.5;
+            const x = Math.cos(angle) * rad;
+            const y = Math.sin(angle) * rad;
+            if (i === 0) this.ctx.moveTo(x, y);
+            else this.ctx.lineTo(x, y);
+          }
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+          
+        case 'pot':
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, r * 0.8, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.beginPath();
+          this.ctx.arc(-r * 0.9, -r * 0.3, r * 0.2, 0, Math.PI * 2);
+          this.ctx.arc(r * 0.9, -r * 0.3, r * 0.2, 0, Math.PI * 2);
+          this.ctx.fill();
+          break;
+        
+        case 'heart':
+          this.ctx.beginPath();
+          const h = r * 0.3;
+          this.ctx.moveTo(0, h);
+          this.ctx.bezierCurveTo(0, 0, -r / 2, -r / 3, -r / 2, h);
+          this.ctx.bezierCurveTo(-r / 2, (h + r) / 2, 0, (h + r) / 1.3, 0, r);
+          this.ctx.bezierCurveTo(0, (h + r) / 1.3, r / 2, (h + r) / 2, r / 2, h);
+          this.ctx.bezierCurveTo(r / 2, -r / 3, 0, 0, 0, h);
+          this.ctx.fill();
+          break;
+        
+        case 'wave':
+          this.ctx.beginPath();
+          for (let i = 0; i <= 20; i++) {
+            const angle = (i / 20) * Math.PI * 2;
+            const rad = r + Math.sin(angle * 3) * (r * 0.3);
+            const x = Math.cos(angle) * rad;
+            const y = Math.sin(angle) * rad;
+            if (i === 0) this.ctx.moveTo(x, y);
+            else this.ctx.lineTo(x, y);
+          }
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+          
+        default:
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, r, 0, Math.PI * 2);
+          this.ctx.fill();
+      }
+    }
+    
+    drawConnections() {
+      const config = this.pageConfigs[this.currentPage] || this.pageConfigs.accueil;
+      
+      this.connections.forEach(connection => {
+        const nodeA = this.nodes[connection.nodeA];
+        const nodeB = this.nodes[connection.nodeB];
+        
+        if (!nodeA || !nodeB) return;
+        
+                    const baseAlpha = this.isDarkMode ? 0.7 : 0.5;
+        const alpha = Math.min(nodeA.alpha, nodeB.alpha) * connection.strength * baseAlpha;
+        if (alpha <= 0) return;
+        
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha;
+        
+        const pulseIntensity = (Math.sin(connection.pulse) + 1) / 2;
+        const lineWidth = 1 + pulseIntensity * 2;
+        
+        const gradient = this.ctx.createLinearGradient(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
+        gradient.addColorStop(0, nodeA.color || config.primaryColor);
+        gradient.addColorStop(0.5, config.secondaryColor);
+        gradient.addColorStop(1, nodeB.color || config.primaryColor);
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(nodeA.x, nodeA.y);
+        this.ctx.lineTo(nodeB.x, nodeB.y);
+        this.ctx.strokeStyle = gradient;
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.stroke();
+        
+        this.ctx.restore();
+      });
+    }
+    
+    drawParticles() {
+      this.particles.forEach(particle => {
+        this.ctx.save();
+        
+        particle.trail.forEach((point, index) => {
+          const trailAlpha = (index / particle.trail.length) * particle.alpha * 0.5;
+          this.ctx.globalAlpha = trailAlpha;
+          this.ctx.fillStyle = particle.color;
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, particle.size * 0.5, 0, Math.PI * 2);
+          this.ctx.fill();
+        });
+        
+        this.ctx.globalAlpha = particle.alpha;
+        
+        const glowGradient = this.ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.size * 4
+        );
+        glowGradient.addColorStop(0, particle.color);
+        glowGradient.addColorStop(0.5, this.hexToRgba(particle.color, 0.5));
+        glowGradient.addColorStop(1, this.hexToRgba(particle.color, 0));
+        
+        this.ctx.fillStyle = glowGradient;
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size * 4, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.fillStyle = particle.color;
+        this.ctx.beginPath();
+        this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.restore();
+      });
+    }
+    
+    updateConnections() {
+      this.connections.forEach(connection => {
+        connection.pulse += connection.pulseSpeed;
+        
+        const nodeA = this.nodes[connection.nodeA];
+        const nodeB = this.nodes[connection.nodeB];
+        
+        if (nodeA && nodeB) {
+          const distance = this.getDistance(nodeA, nodeB);
+          const maxDistance = 300;
+          connection.strength = Math.max(0, 1 - distance / maxDistance);
+        }
+      });
+      
+      this.connections = this.connections.filter(conn => conn.strength > 0.1);
+    }
+    
+    getDistance(nodeA, nodeB) {
+      const dx = nodeA.x - nodeB.x;
+      const dy = nodeA.y - nodeB.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    
+    animate() {
+      this.drawBackground();
+      this.updateNodes();
+      this.updateConnections();
+      this.updateParticles();
+      this.updateWaves();
+      
+      this.drawWaves();
+      this.drawConnections();
+      this.drawParticles();
+      this.drawNodes();
+      
+      this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    
+    destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+    }
+  }
+  
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('mafaAnimationCanvas');
+    if (canvas) {
+      const animation = new MafaAnimations(canvas);
+      
+      // Clean up on page unload
+      window.addEventListener('beforeunload', () => {
+        animation.destroy();
+      });
+    }
+  });
+</script>
+
